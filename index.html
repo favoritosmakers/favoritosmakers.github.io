@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My AI Lab | 포트폴리오</title>
+    <meta
+      name="description"
+      content="AI와 함께 성장하는 직장인의 바이브 코딩 포트폴리오"
+    />
+    <style>
+      :root {
+        --bg: #050816;
+        --bg-alt: #0b1020;
+        --card: #111827;
+        --primary: #38bdf8;
+        --primary-soft: rgba(56, 189, 248, 0.15);
+        --accent: #a855f7;
+        --text: #e5e7eb;
+        --muted: #9ca3af;
+        --border: rgba(148, 163, 184, 0.25);
+        --shadow-soft: 0 18px 60px rgba(15, 23, 42, 0.75);
+        --radius-lg: 18px;
+        --radius-xl: 28px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo",
+          "Noto Sans KR", sans-serif;
+        background:
+          radial-gradient(circle at top left, rgba(56, 189, 248, 0.18), transparent 55%),
+          radial-gradient(circle at top right, rgba(168, 85, 247, 0.18), transparent 55%),
+          radial-gradient(circle at bottom, rgba(16, 185, 129, 0.16), transparent 55%),
+          var(--bg);
+        color: var(--text);
+        -webkit-font-smoothing: antialiased;
+      }
+
+      main {
+        max-width: 1080px;
+        margin: 0 auto;
+        padding: 32px 18px 64px;
+      }
+
+      .shell {
+        position: relative;
+        border-radius: var(--radius-xl);
+        border: 1px solid rgba(148, 163, 184, 0.35);
+        background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.12), transparent 55%),
+          radial-gradient(circle at bottom right, rgba(168, 85, 247, 0.18), transparent 60%),
+          linear-gradient(135deg, rgba(15, 23, 42, 0.92), rgba(15, 23, 42, 0.98));
+        box-shadow: var(--shadow-soft);
+        overflow: hidden;
+      }
+
+      .shell::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        border: 1px solid rgba(148, 163, 184, 0.3);
+        mix-blend-mode: soft-light;
+        pointer-events: none;
+      }
+
+      .shell-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 18px;
+        border-bottom: 1px solid rgba(55, 65, 81, 0.8);
+        background: linear-gradient(to right, rgba(15, 23, 42, 0.96), rgba(15, 23, 42, 0.85));
+        backdrop-filter: blur(20px);
+      }
+
+      .traffic-dots {
+        display: flex;
+        gap: 8px;
+      }
+
+      .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 999px;
+        border: 1px solid rgba(15, 23, 42, 0.8);
+      }
+
+      .dot.red {
+        background: #f97373;
+      }
+
+      .dot.yellow {
+        background: #fbbf24;
+      }
+
+      .dot.green {
+        background: #34d399;
+      }
+
+      .shell-title {
+        font-size: 0.78rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+
+      .badge-row {
+        display: flex;
+        gap: 8px;
+      }
+
+      .badge {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        padding: 4px 8px;
+        border-radius: 999px;
+        background: rgba(15, 23, 42, 0.85);
+        border: 1px solid rgba(148, 163, 184, 0.35);
+        color: var(--muted);
+      }
+
+      .badge--primary {
+        background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.45), rgba(56, 189, 248, 0.1));
+        color: #ecfeff;
+        border-color: rgba(56, 189, 248, 0.7);
+      }
+
+      .content {
+        display: flex;
+        flex-direction: column;
+        gap: 26px;
+        padding: 28px 24px 26px;
+      }
+
+      .hero-layout {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 32px;
+      }
+
+      .hero-main {
+        flex: 1 1 0;
+        min-width: 0;
+      }
+
+      .hero-photo-wrapper {
+        flex: 0 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .hero-photo {
+        position: relative;
+        width: 220px;
+        aspect-ratio: 3 / 4;
+        border-radius: 24px;
+        overflow: visible;
+        background: transparent;
+      }
+
+      .hero-photo::before {
+        content: "";
+        position: absolute;
+        inset: -6px;
+        border-radius: 28px;
+        background:
+          radial-gradient(circle at 20% 0%, rgba(255, 255, 255, 0.8), transparent 65%),
+          radial-gradient(circle at 100% 100%, rgba(248, 250, 252, 0.85), transparent 60%),
+          linear-gradient(135deg, #f9fafb, #e5e7eb);
+        box-shadow:
+          0 18px 40px rgba(15, 23, 42, 0.85),
+          0 0 0 1px rgba(148, 163, 184, 0.5);
+        opacity: 0.95;
+        filter: blur(0.4px);
+        pointer-events: none;
+        z-index: -1;
+      }
+
+      .hero-photo img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: 50% 35%;
+        display: block;
+        border-radius: 24px;
+        -webkit-mask-image: radial-gradient(130% 130% at 50% 38%, #000 72%, transparent 100%);
+        mask-image: radial-gradient(130% 130% at 50% 38%, #000 72%, transparent 100%);
+        filter: drop-shadow(0 18px 40px rgba(15, 23, 42, 0.9));
+      }
+
+      .projects-section {
+        max-width: 980px;
+        margin: 8px auto 0;
+      }
+
+      .hero-eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 10px 4px 4px;
+        border-radius: 999px;
+        background: rgba(15, 23, 42, 0.9);
+        border: 1px solid rgba(55, 65, 81, 0.9);
+        margin-bottom: 14px;
+      }
+
+      .hero-eyebrow-pill {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 22px;
+        height: 22px;
+        border-radius: 999px;
+        background: radial-gradient(circle at 30% 10%, #4ade80, #22c55e);
+        box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.4);
+        color: #022c22;
+        font-size: 0.9rem;
+        font-weight: 700;
+      }
+
+      .hero-eyebrow-text {
+        font-size: 0.78rem;
+        color: var(--muted);
+      }
+
+      .hero-title {
+        font-size: clamp(1.9rem, 3vw, 2.4rem);
+        line-height: 1.15;
+        letter-spacing: -0.03em;
+        margin: 0 0 10px;
+      }
+
+      .hero-title span.gradient {
+        background: linear-gradient(120deg, #38bdf8, #a855f7, #22c55e);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+
+      .hero-subtitle {
+        font-size: 0.96rem;
+        line-height: 1.6;
+        color: var(--muted);
+        margin: 0 0 18px;
+      }
+
+      .hero-subtitle strong {
+        color: #e5e7eb;
+        font-weight: 600;
+      }
+
+      .hero-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px 16px;
+        margin-bottom: 22px;
+      }
+
+      .hero-meta-item {
+        font-size: 0.78rem;
+        color: var(--muted);
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .hero-meta-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 999px;
+        background: radial-gradient(circle at 30% 20%, #38bdf8, #0ea5e9);
+        box-shadow: 0 0 10px rgba(56, 189, 248, 0.7);
+      }
+
+      .hero-meta-label {
+        color: #e5e7eb;
+        font-weight: 500;
+      }
+
+      .cta-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 12px;
+      }
+
+      .btn {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 10px 16px;
+        border-radius: 999px;
+        border: 1px solid transparent;
+        font-size: 0.86rem;
+        cursor: pointer;
+        text-decoration: none;
+        transition: transform 0.12s ease-out, box-shadow 0.12s ease-out, background 0.18s ease-out,
+          border-color 0.18s ease-out, color 0.18s ease-out;
+        white-space: nowrap;
+      }
+
+      .btn-primary {
+        background: radial-gradient(circle at 0% 0%, #22d3ee, #0ea5e9, #0369a1);
+        color: #ecfeff;
+        box-shadow:
+          0 12px 35px rgba(37, 99, 235, 0.55),
+          0 0 0 1px rgba(56, 189, 248, 0.6);
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-1px) scale(1.01);
+        box-shadow:
+          0 18px 40px rgba(37, 99, 235, 0.75),
+          0 0 0 1px rgba(56, 189, 248, 0.9);
+      }
+
+      .btn-ghost {
+        background: rgba(15, 23, 42, 0.9);
+        border-color: rgba(148, 163, 184, 0.6);
+        color: var(--muted);
+      }
+
+      .btn-ghost:hover {
+        background: rgba(15, 23, 42, 0.95);
+        border-color: rgba(156, 163, 175, 0.9);
+        color: #e5e7eb;
+      }
+
+      .btn-label-sub {
+        font-size: 0.72rem;
+        opacity: 0.9;
+      }
+
+      .hint {
+        font-size: 0.78rem;
+        color: var(--muted);
+      }
+
+      .highlight-label {
+        color: #e5e7eb;
+        font-weight: 500;
+      }
+
+      .projects-grid {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: stretch;
+        gap: 14px;
+      }
+
+      .project-card {
+        position: relative;
+        border-radius: var(--radius-lg);
+        border: 1px solid var(--border);
+        background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.14), transparent 60%),
+          radial-gradient(circle at bottom right, rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.9));
+        padding: 14px 14px 13px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        width: min(320px, 100%);
+      }
+
+      .project-tagline {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.75rem;
+        color: var(--muted);
+        margin-bottom: 8px;
+      }
+
+      .pulse-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 999px;
+        background: #4ade80;
+        box-shadow:
+          0 0 0 0 rgba(74, 222, 128, 0.7),
+          0 0 12px rgba(74, 222, 128, 1);
+        animation: pulse 1.7s infinite;
+      }
+
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
+          box-shadow:
+            0 0 0 0 rgba(74, 222, 128, 0.8),
+            0 0 12px rgba(74, 222, 128, 1);
+        }
+        70% {
+          transform: scale(1.6);
+          box-shadow:
+            0 0 0 10px rgba(74, 222, 128, 0),
+            0 0 4px rgba(74, 222, 128, 0.8);
+        }
+        100% {
+          transform: scale(1);
+          box-shadow:
+            0 0 0 0 rgba(74, 222, 128, 0),
+            0 0 2px rgba(74, 222, 128, 0.3);
+        }
+      }
+
+      .project-avatar {
+        position: relative;
+        flex: 0 0 auto;
+        width: 70px;
+        height: 70px;
+        border-radius: 16px;
+        background:
+          linear-gradient(to bottom right, rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.98));
+        border: 1px solid rgba(148, 163, 184, 0.65);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+      }
+
+      .project-avatar::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image: linear-gradient(
+            rgba(15, 23, 42, 0.3),
+            rgba(15, 23, 42, 0.9)
+          ),
+          linear-gradient(
+            120deg,
+            rgba(56, 189, 248, 0.35),
+            rgba(168, 85, 247, 0.25),
+            rgba(56, 189, 248, 0.35)
+          );
+        background-size: auto, 200% 200%;
+        mix-blend-mode: soft-light;
+        opacity: 0.9;
+        pointer-events: none;
+      }
+
+      .project-avatar svg {
+        position: relative;
+        width: 34px;
+        height: 34px;
+        filter: drop-shadow(0 0 10px rgba(56, 189, 248, 0.85));
+      }
+
+      .project-body {
+        min-width: 0;
+      }
+
+      .project-media-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin: 4px 0 2px;
+      }
+
+      .project-title-row {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 4px;
+      }
+
+      .project-title {
+        font-size: 0.98rem;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+      }
+
+      .project-chip-row {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+      }
+
+      .chip {
+        font-size: 0.7rem;
+        padding: 2px 7px;
+        border-radius: 999px;
+        border: 1px solid rgba(148, 163, 184, 0.5);
+        background: rgba(15, 23, 42, 0.9);
+        color: var(--muted);
+      }
+
+      .chip-em {
+        border-color: rgba(56, 189, 248, 0.7);
+        color: #e0f2fe;
+        background: rgba(15, 23, 42, 0.9);
+      }
+
+      .project-desc {
+        font-size: 0.8rem;
+        color: var(--muted);
+        line-height: 1.5;
+        margin: 0 0 6px;
+      }
+
+      .project-download {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        padding: 7px 11px;
+        border-radius: 999px;
+        border: 1px solid rgba(56, 189, 248, 0.9);
+        background: rgba(15, 23, 42, 0.95);
+        color: #e0f2fe;
+        font-size: 0.78rem;
+        text-decoration: none;
+        white-space: nowrap;
+        transition: background 0.16s ease-out, border-color 0.16s ease-out, transform 0.12s ease-out,
+          color 0.16s ease-out;
+      }
+
+      .project-download:hover {
+        background: rgba(15, 23, 42, 1);
+        border-color: rgba(56, 189, 248, 1);
+        color: #f9fafb;
+        transform: translateY(-0.5px);
+      }
+
+      .project-meta {
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+        align-items: center;
+      }
+
+      .project-metrics {
+        display: flex;
+        gap: 8px;
+        font-size: 0.72rem;
+        color: var(--muted);
+        flex-wrap: wrap;
+      }
+
+      .metric-pill {
+        padding: 2px 7px;
+        border-radius: 999px;
+        border: 1px solid rgba(31, 41, 55, 0.9);
+        background: rgba(15, 23, 42, 0.85);
+      }
+
+      .metric-pill span {
+        color: #e5e7eb;
+        font-weight: 500;
+      }
+
+      .project-link {
+        font-size: 0.76rem;
+        color: #bfdbfe;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 4px 8px;
+        border-radius: 999px;
+        border: 1px solid transparent;
+        background: rgba(15, 23, 42, 0.65);
+        transition: background 0.16s ease-out, border-color 0.16s ease-out, color 0.16s ease-out,
+          transform 0.12s ease-out;
+      }
+
+      .project-link:hover {
+        background: rgba(15, 23, 42, 0.92);
+        border-color: rgba(56, 189, 248, 0.8);
+        color: #e0f2fe;
+        transform: translateY(-0.5px);
+      }
+
+      .section-heading {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 12px;
+      }
+
+      .section-title {
+        font-size: 0.86rem;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+
+      .section-counter {
+        font-size: 0.8rem;
+        color: var(--muted);
+      }
+
+      .timeline {
+        margin-top: 14px;
+        padding-top: 10px;
+        border-top: 1px dashed rgba(55, 65, 81, 0.8);
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px 18px;
+        font-size: 0.76rem;
+        color: var(--muted);
+      }
+
+      .timeline-item-label {
+        color: #e5e7eb;
+      }
+
+      .timeline-dot {
+        display: inline-block;
+        width: 4px;
+        height: 4px;
+        border-radius: 999px;
+        background: rgba(148, 163, 184, 0.8);
+        margin: 0 6px;
+      }
+
+      .stack-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 4px;
+      }
+
+      .stack-pill {
+        font-size: 0.7rem;
+        padding: 2px 7px;
+        border-radius: 999px;
+        background: rgba(15, 23, 42, 0.9);
+        border: 1px solid rgba(156, 163, 175, 0.6);
+        color: #e5e7eb;
+      }
+
+      .stack-pill.secondary {
+        color: var(--muted);
+        border-color: rgba(55, 65, 81, 0.9);
+      }
+
+      .stack-pill.em {
+        border-color: rgba(56, 189, 248, 0.9);
+        background: rgba(15, 23, 42, 0.95);
+      }
+
+      .footer {
+        padding: 14px 20px 18px;
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 10px;
+        border-top: 1px solid rgba(31, 41, 55, 0.9);
+        font-size: 0.76rem;
+        color: var(--muted);
+        background: linear-gradient(to right, rgba(15, 23, 42, 0.92), rgba(15, 23, 42, 0.94));
+      }
+
+      .footer-links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .footer-link {
+        color: #e5e7eb;
+        text-decoration: none;
+        padding: 3px 8px;
+        border-radius: 999px;
+        border: 1px solid rgba(55, 65, 81, 0.9);
+        background: rgba(15, 23, 42, 0.9);
+        transition: background 0.16s ease-out, border-color 0.16s ease-out, color 0.16s ease-out;
+      }
+
+      .footer-link:hover {
+        background: rgba(15, 23, 42, 0.98);
+        border-color: rgba(56, 189, 248, 0.9);
+        color: #e0f2fe;
+      }
+
+      @media (max-width: 640px) {
+        main {
+          padding: 18px 12px 32px;
+        }
+        .shell {
+          border-radius: 20px;
+        }
+        .shell-header {
+          padding-inline: 12px;
+        }
+        .content {
+          padding: 18px 14px 16px;
+          gap: 22px;
+        }
+        .hero-layout {
+          flex-direction: column;
+          gap: 20px;
+        }
+        .hero-photo {
+          width: 180px;
+        }
+        .hero-title {
+          font-size: 1.7rem;
+        }
+        .hero-subtitle {
+          font-size: 0.9rem;
+        }
+        .project-card {
+          grid-template-columns: minmax(0, 1fr);
+        }
+        .footer {
+          padding-inline: 14px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <section class="shell" aria-label="My AI Project Portfolio">
+        <header class="shell-header">
+          <div class="traffic-dots" aria-hidden="true">
+            <span class="dot red"></span>
+            <span class="dot yellow"></span>
+            <span class="dot green"></span>
+          </div>
+          <div class="shell-title">my_ai_lab • portfolio</div>
+          <div class="badge-row">
+            <div class="badge">AI boosted</div>
+            <div class="badge badge--primary">vibe coding in progress</div>
+          </div>
+        </header>
+
+        <div class="content">
+          <div class="hero-layout">
+            <div class="hero-main">
+              <div class="hero-eyebrow">
+                <div class="hero-eyebrow-pill">AI</div>
+                <p class="hero-eyebrow-text">
+                  직장인 × 사이드프로젝트 × 바이브 코딩
+                </p>
+              </div>
+
+              <h1 class="hero-title">
+                퇴근 후, <span class="gradient">AI와 함께</span><br />
+                내가 만든 프로그램을 쌓아가는 공간
+              </h1>
+
+              <p class="hero-subtitle">
+                이 페이지는
+                <strong>AI를 활용해 실험하고 성장하는 기록</strong>입니다. (2026.03.01~
+                )<br />
+                작은 자동화부터 실무에 바로 쓰는 도구까지, 훗날 <strong>“해보니까
+                어땠는지”</strong>를 기억하기 위해 만들었습니다.
+              </p>
+
+              <div class="hero-meta" aria-label="현재 포지션 및 관심사">
+                <div class="hero-meta-item">
+                  <span class="hero-meta-dot"></span>
+                  <span class="hero-meta-label">Hi guys, I am</span>
+                  <span
+                    >· 재테크와 카운티캠핑카에 관심 많음, 아내와 말 안듣는 고딩 딸 둘, 반려견 시츄
+                    두마리와 함께 살고 있습니다.</span
+                  >
+                </div>
+              </div>
+              <div class="timeline" aria-label="코딩 타임라인"></div>
+            </div>
+
+            <div class="hero-photo-wrapper">
+              <div class="hero-photo">
+                <img src="profile.png" alt="해변에서 물고기를 들고 있는 나를 표현한 일러스트" />
+              </div>
+            </div>
+          </div>
+
+          <!-- PROJECT LIST (CENTERED UNDER INTRO) -->
+          <div id="projects" class="projects-section">
+            <header class="section-heading">
+              <div class="section-title">Projects · Experiments</div>
+              <div class="section-counter">1개 완료 / 1개 진행중</div>
+            </header>
+
+            <div class="projects-grid">
+              <!-- PROJECT 1 -->
+              <article class="project-card">
+                <div class="project-title-row">
+                  <h2 class="project-title">카드 실적 관리 프로그램</h2>
+                  <div class="project-chip-row">
+                    <span class="chip">앱</span>
+                    <span class="chip">안드로이드</span>
+                  </div>
+                </div>
+                <div class="project-media-row">
+                  <div class="project-avatar" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                      <path
+                        d="M4.5 8.5C4.5 7.12 5.62 6 7 6H17c1.38 0 2.5 1.12 2.5 2.5v7C19.5 16.88 18.38 18 17 18H7c-1.38 0-2.5-1.12-2.5-2.5v-7Z"
+                        stroke="rgba(224,242,254,0.95)"
+                        stroke-width="1.6"
+                      />
+                      <path
+                        d="M4.8 9.4h14.4"
+                        stroke="rgba(56,189,248,0.9)"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                      />
+                      <path
+                        d="M7.4 14.2h4.9"
+                        stroke="rgba(168,85,247,0.95)"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                      />
+                      <path
+                        d="M7.4 16.6h2.7"
+                        stroke="rgba(74,222,128,0.95)"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                      />
+                    </svg>
+                  </div>
+                  <a href="#" class="project-download">
+                    다운로드 (APK파일)
+                    <span aria-hidden="true">↓</span>
+                  </a>
+                </div>
+                <p class="project-desc">
+                  카드별 실적 조건을 한눈에 보고, 다음 달 혜택을 받기 위해서 필요한 실적을
+                  자동으로 보여줍니다.
+                </p>
+                <p class="project-desc">
+                  Android Studio, Gemini
+                </p>
+              </article>
+
+              <!-- PROJECT 2 -->
+              <article class="project-card">
+                <div class="project-title-row">
+                  <h2 class="project-title">블로그 글 자동 등록</h2>
+                  <div class="project-chip-row">
+                    <span class="chip">앱</span>
+                    <span class="chip">안드로이드</span>
+                  </div>
+                </div>
+                <div class="project-media-row">
+                  <div class="project-avatar" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                      <!-- 경제/투자 느낌의 차트 + 화살표 아이콘 -->
+                      <path
+                        d="M4 18.5h16"
+                        stroke="rgba(148,163,184,0.9)"
+                        stroke-width="1.4"
+                        stroke-linecap="round"
+                      />
+                      <path
+                        d="M6.2 16V11.5"
+                        stroke="rgba(56,189,248,0.95)"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                      />
+                      <path
+                        d="M11 16V9.2"
+                        stroke="rgba(59,130,246,0.95)"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                      />
+                      <path
+                        d="M15.8 16v-4.6"
+                        stroke="rgba(16,185,129,0.95)"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                      />
+                      <path
+                        d="M8 8.5 11.3 6l3.4 2.2 3.3-3.2"
+                        stroke="rgba(250,204,21,0.95)"
+                        stroke-width="1.6"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                      <path
+                        d="M17.7 5h1.9v2"
+                        stroke="rgba(250,204,21,0.95)"
+                        stroke-width="1.6"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg>
+                  </div>
+                  <a href="#" class="project-download">
+                    제작중...
+                    <span aria-hidden="true">↓</span>
+                  </a>
+                </div>
+                <p class="project-desc">
+                  매일 아침, 미국 시황 분석을 요약하고 사람들이 좋아할 만한 ETF 한 종목에 대한 분석 보고서를 작성한 후 블로그에 자동으로 등록합니다.
+                </p>
+                <p class="project-desc">
+                  (maybe) Python, Gemini, Wordpress...
+                </p>
+              </article>
+
+    
+            </div>
+          </div>
+
+          <div class="timeline" aria-label="코딩 타임라인"></div>
+          <div class="hero-meta" aria-label="현재 포지션 및 관심사">
+            <div class="hero-meta-item">
+              <span class="hero-meta-dot"></span>
+              <span class="hero-meta-label">앞으로 만들고 싶은 것들</span>
+              <span
+                >· 매수/매도 알림 앱, 가전제품/자동차 유지보수 알림 앱, 인바디 결과 기록 앱, 
+                and so on...</span
+              >
+            </div>
+          </div>
+        </div>
+        <footer class="footer" id="contact">
+          <div>
+            <span class="timeline-item-label">Copyright 2026. favoritosmakers. All rights reserved.</span>
+            <span class="timeline-dot"></span>
+            favoritosmakers@gmail.com
+          </div>
+          <nav class="footer-links" aria-label="외부 링크">
+            <!-- 아래 링크들을 내 정보에 맞게 교체해서 사용하세요 -->
+            <a class="footer-link" href="#" target="_blank" rel="noreferrer">
+              GitHub
+            </a>
+            <a class="footer-link" href="#" target="_blank" rel="noreferrer">
+              Blog
+            </a>
+            <a class="footer-link" href="mailto:favoritosmakers@gmail.com">
+              E-mail
+            </a>
+          </nav>
+        </footer>
+      </section>
+    </main>
+
+    <script>
+      function scrollToProjects() {
+        const el = document.getElementById("projects");
+        if (!el) return;
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+
+      function scrollToContact() {
+        const el = document.getElementById("contact");
+        if (!el) return;
+        el.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+
+      function alertEditHint() {
+        alert(
+          "이 카드 제목/설명을 직접 수정해서\n내 다음 프로젝트 계획이나 현재 진행 중인 작업을 적어 두면 좋아요."
+        );
+      }
+    </script>
+  </body>
+</html>
+
