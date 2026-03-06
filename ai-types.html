@@ -1,0 +1,1531 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>생성형 AI 서비스 총람 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #12121a;
+    --surface2: #1a1a26;
+    --border: #2a2a40;
+    --accent1: #7c5cfc;
+    --accent2: #00d4aa;
+    --accent3: #ff6b6b;
+    --accent4: #ffd166;
+    --accent5: #06d6a0;
+    --text: #e8e8f0;
+    --text-muted: #7a7a9a;
+    --text-dim: #4a4a6a;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 13px;
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+
+  /* Grid background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 40px 40px;
+    opacity: 0.15;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 40px 24px;
+  }
+
+  /* Header */
+  header {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+
+  .header-tag {
+    display: inline-block;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--accent2);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    border: 1px solid var(--accent2);
+    padding: 4px 12px;
+    margin-bottom: 16px;
+    opacity: 0.8;
+  }
+
+  h1 {
+    font-size: clamp(28px, 5vw, 52px);
+    font-weight: 900;
+    letter-spacing: -1px;
+    background: linear-gradient(135deg, #fff 30%, var(--accent1) 70%, var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.1;
+    margin-bottom: 12px;
+  }
+
+  .subtitle {
+    color: var(--text-muted);
+    font-size: 14px;
+    font-weight: 300;
+  }
+
+  /* Stats bar */
+  .stats-bar {
+    display: flex;
+    gap: 24px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 40px;
+  }
+
+  .stat-pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    padding: 8px 20px;
+    font-size: 12px;
+  }
+
+  .stat-pill .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+  }
+
+  /* Category nav */
+  .category-nav {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 32px;
+    justify-content: center;
+  }
+
+  .cat-btn {
+    cursor: pointer;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    padding: 6px 16px;
+    border-radius: 100px;
+    font-size: 12px;
+    font-family: 'Noto Sans KR', sans-serif;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+
+  .cat-btn:hover, .cat-btn.active {
+    color: var(--text);
+    border-color: var(--accent1);
+    background: rgba(124,92,252,0.15);
+  }
+
+  /* Section */
+  .section {
+    margin-bottom: 40px;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-icon {
+    font-size: 20px;
+    width: 40px; height: 40px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 10px;
+    flex-shrink: 0;
+  }
+
+  .section-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .section-desc {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-weight: 300;
+  }
+
+  .section-count {
+    margin-left: auto;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+  }
+
+  /* Table */
+  .table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--surface);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  thead tr {
+    background: var(--surface2);
+  }
+
+  th {
+    padding: 10px 14px;
+    text-align: left;
+    font-size: 11px;
+    font-family: 'Space Mono', monospace;
+    color: var(--text-muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+
+  td {
+    padding: 10px 14px;
+    border-bottom: 1px solid rgba(42,42,64,0.6);
+    vertical-align: middle;
+  }
+
+  tr:last-child td { border-bottom: none; }
+
+  tr:hover td { background: rgba(124,92,252,0.04); }
+
+  .tool-name {
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--text);
+    white-space: nowrap;
+  }
+
+  .tool-maker {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-weight: 300;
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 100px;
+    font-size: 10px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .badge-free { background: rgba(0,212,170,0.15); color: var(--accent2); border: 1px solid rgba(0,212,170,0.3); }
+  .badge-paid { background: rgba(255,107,107,0.12); color: var(--accent3); border: 1px solid rgba(255,107,107,0.25); }
+  .badge-freemium { background: rgba(255,209,102,0.12); color: var(--accent4); border: 1px solid rgba(255,209,102,0.25); }
+  .badge-open { background: rgba(6,214,160,0.12); color: var(--accent5); border: 1px solid rgba(6,214,160,0.25); }
+
+  .feature-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .ftag {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    padding: 2px 7px;
+    border-radius: 4px;
+    font-size: 10px;
+    white-space: nowrap;
+  }
+
+  /* Color accents per category */
+  .icon-llm { background: rgba(124,92,252,0.2); }
+  .icon-image { background: rgba(255,107,107,0.2); }
+  .icon-video { background: rgba(255,209,102,0.2); }
+  .icon-audio { background: rgba(0,212,170,0.2); }
+  .icon-code { background: rgba(6,214,160,0.2); }
+  .icon-writing { background: rgba(124,92,252,0.2); }
+  .icon-search { background: rgba(0,212,170,0.2); }
+  .icon-business { background: rgba(255,209,102,0.2); }
+  .icon-design { background: rgba(255,107,107,0.2); }
+  .icon-3d { background: rgba(6,214,160,0.2); }
+  .icon-agent { background: rgba(124,92,252,0.2); }
+  .icon-meeting { background: rgba(0,212,170,0.2); }
+
+  .border-llm { border-left: 3px solid var(--accent1); }
+  .border-image { border-left: 3px solid var(--accent3); }
+  .border-video { border-left: 3px solid var(--accent4); }
+  .border-audio { border-left: 3px solid var(--accent2); }
+  .border-code { border-left: 3px solid var(--accent5); }
+  .border-writing { border-left: 3px solid #c084fc; }
+  .border-search { border-left: 3px solid var(--accent2); }
+  .border-business { border-left: 3px solid var(--accent4); }
+  .border-design { border-left: 3px solid var(--accent3); }
+  .border-3d { border-left: 3px solid var(--accent5); }
+  .border-agent { border-left: 3px solid var(--accent1); }
+  .border-meeting { border-left: 3px solid #60a5fa; }
+
+  .stars {
+    font-size: 11px;
+    color: var(--accent4);
+    white-space: nowrap;
+  }
+
+  .note {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-weight: 300;
+    max-width: 220px;
+  }
+
+  /* Footer */
+  footer {
+    text-align: center;
+    padding: 32px 0 16px;
+    color: var(--text-dim);
+    font-size: 11px;
+    font-family: 'Space Mono', monospace;
+  }
+
+  /* Animations */
+  .section { animation: fadeUp 0.5s ease both; }
+  .section:nth-child(2) { animation-delay: 0.05s; }
+  .section:nth-child(3) { animation-delay: 0.1s; }
+  .section:nth-child(4) { animation-delay: 0.15s; }
+  .section:nth-child(5) { animation-delay: 0.2s; }
+  .section:nth-child(6) { animation-delay: 0.25s; }
+  .section:nth-child(7) { animation-delay: 0.3s; }
+  .section:nth-child(8) { animation-delay: 0.35s; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 768px) {
+    th:nth-child(5), td:nth-child(5),
+    th:nth-child(6), td:nth-child(6) { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <div class="header-tag">2026.03 기준 최신</div>
+    <h1>생성형 AI 서비스 총람</h1>
+    <p class="subtitle">Generative AI Tools — 기능 · 목적별 분류 완전판</p>
+  </header>
+
+  <div class="stats-bar">
+    <div class="stat-pill"><span class="dot" style="background:#7c5cfc"></span>LLM 챗봇 12종</div>
+    <div class="stat-pill"><span class="dot" style="background:#ff6b6b"></span>이미지 생성 14종</div>
+    <div class="stat-pill"><span class="dot" style="background:#ffd166"></span>영상 생성 12종</div>
+    <div class="stat-pill"><span class="dot" style="background:#00d4aa"></span>오디오·음악 10종</div>
+    <div class="stat-pill"><span class="dot" style="background:#06d6a0"></span>코드 보조 10종</div>
+    <div class="stat-pill"><span class="dot" style="background:#c084fc"></span>글쓰기 특화 8종</div>
+    <div class="stat-pill"><span class="dot" style="background:#60a5fa"></span>검색·리서치 6종</div>
+    <div class="stat-pill"><span class="dot" style="background:#ffd166"></span>비즈니스 자동화 8종</div>
+    <div class="stat-pill"><span class="dot" style="background:#ff6b6b"></span>디자인 특화 6종</div>
+    <div class="stat-pill"><span class="dot" style="background:#06d6a0"></span>3D·아바타 5종</div>
+    <div class="stat-pill"><span class="dot" style="background:#7c5cfc"></span>AI 에이전트 6종</div>
+    <div class="stat-pill"><span class="dot" style="background:#60a5fa"></span>회의·생산성 6종</div>
+  </div>
+
+  <!-- 1. LLM 챗봇 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon icon-llm">🧠</div>
+      <div>
+        <div class="section-title">① 대형 언어 모델 (LLM) 챗봇 · 범용 AI 어시스턴트</div>
+        <div class="section-desc">텍스트 생성, 질의응답, 추론, 번역 등 멀티태스크 처리</div>
+      </div>
+      <span class="section-count">12종</span>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>서비스명</th>
+            <th>개발사</th>
+            <th>핵심 특징</th>
+            <th>주요 기능 태그</th>
+            <th>요금제</th>
+            <th>비고</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="border-llm">
+            <td><div class="tool-name">ChatGPT</div><div class="tool-maker">OpenAI</div></td>
+            <td>OpenAI (미국)</td>
+            <td class="note">세계 최대 사용자 기반, GPT-4o 모델, Sora 영상 연동</td>
+            <td><div class="feature-tags"><span class="ftag">텍스트</span><span class="ftag">이미지</span><span class="ftag">코드</span><span class="ftag">음성</span><span class="ftag">파일분석</span></div></td>
+            <td><span class="badge badge-freemium">프리미엄</span></td>
+            <td class="note">Plus $20/월, 月 사용자 5억+</td>
+          </tr>
+          <tr class="border-llm">
+            <td><div class="tool-name">Claude</div><div class="tool-maker">Anthropic</div></td>
+            <td>Anthropic (미국)</td>
+            <td class="note">긴 컨텍스트(200K), 안전성 중시, 문서 분석 탁월</td>
+            <td><div class="feature-tags"><span class="ftag">텍스트</span><span class="ftag">코드</span><span class="ftag">문서분석</span><span class="ftag">추론</span></div></td>
+            <td><span class="badge badge-freemium">프리미엄</span></td>
+            <td class="note">Claude Sonnet 4.6 / Opus 4.6</td>
+          </tr>
+          <tr class="border-llm">
+            <td><div class="tool-name">Gemini</div><div class="tool-maker">Google DeepMind</div></td>
+            <td>Google (미국)</td>
+            <td class="note">구글 생태계 통합, 실시간 검색, 멀티모달 처리</td>
+            <td><div class="feature-tags"><span class="ftag">텍스트</span><span class="ftag">이미지</span><span class="ftag">코드</span><span class="ftag">실시간검색</span></div></td>
+            <td><span class="badge badge-freemium">프리미엄</span></td>
+            <td class="note">Gemini 2.5 Pro 출시</td>
+          </tr>
+          <tr class="border-llm">
+            <td><div class="tool-name">Grok</div><div class="tool-maker">xAI</div></td>
+            <td>xAI (미국)</td>
+            <td class="note">X(트위터) 실시간 데이터 연동, 검열 최소화</td>
+            <td><div class="feature-tags"><span class="ftag">텍스트</span><span class="ftag">이미지</span><span class="ftag">실시간정보</span></div></td>
+            <td><span class="badge badge-freemium">프리미엄</span></td>
+            <td class="note">Grok 3, X Premium 포함</td>
+          </tr>
+          <tr class="border-llm">
+            <td><div class="tool-name">Llama (Meta AI)</div><div class="tool-maker">Meta</div></td>
+            <td>Meta (미국)</td>
+            <td class="note">오픈소스 최강자, 로컬 설치 가능, 상업 이용 가능</td>
+            <td><div class="feature-tags"><span class="ftag">텍스트</span><span class="ftag">코드</span><span class="ftag">오픈소스</span></div></td>
+            <td><span class="badge badge-open">오픈소스</span></td>
+            <td class="note">Llama 4 (2025 출시)</td>
+          </tr>
+          <tr class="border-llm">
+            <td><div class="tool-name">DeepSeek</div><div class="tool-maker">DeepSeek</div></td>
+            <td>DeepSeek (중국)</td>
+            <td class="note">저비용 고성능, 추론 특화, 오픈소스 공개로 화제</td>
+            <td><div class="feature-tags"><span class="ftag">텍스트</span><span class="ftag">코드</span><span class="ftag">추론</span><span class="ftag">오픈소스</span></div></td>
+            <td><span class="badge badge-freemium">프리미엄</span></td>
+            <td class="note">DeepSeek-R1</td>
+          </tr>
+          <tr class="border-llm">
+            <td><div class="tool-name">Mistral</div><div class="tool-maker">Mistral AI</div></td>
+            <td>Mistral AI (프랑스)</td>
+            <td class="note">유럽 기반, 경량 고효율, 오픈소스 라인업 강세</td>
+            <td><div class="feature-tags"><span class="ftag">텍스트</span><span class="ftag">코드</span><span class="ftag">오픈소스</span></div></td>
+            <td><span class="badge badge-open">오픈소스</span></td>
+            <td class="note">Mistral Large / 7B</td>
+          </tr>
+          <tr class="border-llm">
+            <td><div class="tool-name">Copilot (MS)</div><div class="tool-maker">Microsoft</div></td>
+            <td>Microsoft (미국)</td>
+            <td class="note">Windows·Office 전 제품 통합, GPT-4o 기반</td>
+            <td><div class="feature-tags"><span class="ftag">텍스트</span><span class="ftag">이미지</span><span class="ftag">Office통합</span></div></td>
+            <td><span class="badge badge-freemium">프리미엄</span></td>
+            <td class="note">M365 Copilot $30/월</td>
+          </tr>
+          <tr class="border-llm">
+            <td><div class="tool-name">뤼튼 (Wrtn)</div><div class="tool-maker">뤼튼테크놀로지스</div></td>
+            <td>뤼튼테크놀로지스 (한국)</td>
+            <td class="note">한국어 최적화, 다양한 AI 모델 통합 무료 제공</td>
+            <td><div class="feature-tags"><span class="ftag">텍스트</span><span class="ftag">이미지</span><span class="ftag">한국어</span></div></td>
+            <td><span class="badge badge-free">무료</span></td>
+            <td class="note">국내 1위 AI 서비스</td>
+          </tr>
+          <tr class="border-llm">
+            <td><div class="tool-name">에이닷 (A.)</div><div class="tool-maker">SK텔레콤</div></td>
+            <td>SK텔레콤 (한국)</td>
+            <td class="note">통화 요약·AI 통역 특화, 아이폰 기본앱 등재</td>
+            <td><div class="feature-tags"><span class="ftag">텍스트</span><span class="ftag">통화요약</span><span class="ftag">한국어</span></div></td>
+            <td><span class="badge badge-freemium">프리미엄</span></td>
+            <td class="note">SKT 구독 연계</td>
+          </tr>
+          <tr class="border-llm">
+            <td><div class="tool-name">HyperCLOVA X</div><div class="tool-maker">NAVER</div></td>
+            <td>NAVER (한국)</td>
+            <td class="note">한국어·한국 문화 최적화 초대형 LLM, 클로바X 서비스</td>
+            <td><div class="feature-tags"><span class="ftag">텍스트</span><span class="ftag">한국어</span><span class="ftag">B2B</span></div></td>
+            <td><span class="badge badge-freemium">프리미엄</span></td>
+            <td class="note">CLOVA X 무료 서비스</td>
+          </tr>
+          <tr class="border-llm">
+            <td><div class="tool-name">Qwen</div><div class="tool-maker">Alibaba</div></td>
+            <td>Alibaba (중국)</td>
+            <td class="note">중국어·영어 이중 강세, 오픈소스 공개, 멀티모달</td>
+            <td><div class="feature-tags"><span class="ftag">텍스트</span><span class="ftag">코드</span><span class="ftag">오픈소스</span></div></td>
+            <td><span class="badge badge-open">오픈소스</span></td>
+            <td class="note">Qwen2.5</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 2. 이미지 생성 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon icon-image">🎨</div>
+      <div>
+        <div class="section-title">② 이미지 생성 AI</div>
+        <div class="section-desc">텍스트·이미지 입력으로 고품질 이미지 출력</div>
+      </div>
+      <span class="section-count">14종</span>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>서비스명</th>
+            <th>개발사</th>
+            <th>핵심 특징</th>
+            <th>주요 기능 태그</th>
+            <th>요금제</th>
+            <th>비고</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="border-image">
+            <td><div class="tool-name">Midjourney</div><div class="tool-maker">Midjourney</div></td>
+            <td>Midjourney (미국)</td>
+            <td class="note">예술적 완성도 최상위, Discord 기반, V7 출시</td>
+            <td><div class="feature-tags"><span class="ftag">T2I</span><span class="ftag">스타일화</span><span class="ftag">고해상도</span></div></td>
+            <td><span class="badge badge-paid">유료</span></td>
+            <td class="note">기본 $10/월~</td>
+          </tr>
+          <tr class="border-image">
+            <td><div class="tool-name">DALL·E 3</div><div class="tool-maker">OpenAI</div></td>
+            <td>OpenAI (미국)</td>
+            <td class="note">ChatGPT 통합, 텍스트 묘사 충실, 빠른 생성</td>
+            <td><div class="feature-tags"><span class="ftag">T2I</span><span class="ftag">편집</span><span class="ftag">ChatGPT통합</span></div></td>
+            <td><span class="badge badge-freemium">프리미엄</span></td>
+            <td class="note">ChatGPT Plus 포함</td>
+          </tr>
+          <tr class="border-image">
+            <td><div class="tool-name">Stable Diffusion</div><div class="tool-maker">Stability AI</div></td>
+            <td>Stability AI (영국)</td>
+            <td class="note">오픈소스 대표, 로컬 실행, 무한 커스터마이징</td>
+            <td><div class="feature-tags"><span class="ftag">T2I</span><span class="ftag">I2I</span><span class="ftag">오픈소스</span><span class="ftag">로컬실행</span></div></td>
+            <td><span class="badge badge-open">오픈소스</span></td>
+            <td class="note">SD3.5 / SDXL</td>
+          </tr>
+          <tr class="border-image">
+            <td><div class="tool-name">Adobe Firefly</div><div class="tool-maker">Adobe</div></td>
+            <td>Adobe (미국)</td>
+            <td class="note">포토샵·일러스트 통합, 상업 안전 데이터 학습</td>
+            <td><div class="feature-tags"><span class="ftag">T2I</span><span class="ftag">편집</span><span class="ftag">Adobe통합</span><span class="ftag">상업이용</span></div></td>
+            <td><span class="badge badge-freemium">프리미엄</span></td>
+            <td class="note">Creative Cloud 포함</td>
+          </tr>
+          <tr class="border-image">
+            <td><div class="tool-name">Imagen 3</div><div class="tool-maker">Google</div></td>
+            <td>Google (미국)</td>
+            <td class="note">포토리얼리즘 최상위, 프롬프트 이해 정확도 높음</td>
+            <td><div class="feature-tags"><span class="ftag">T2I</span><span class="ftag">포토리얼</span><span class="ftag">다국어</span></div></td>
+            <td><span class="badge badge-freemium">프리미엄</span></td>
+            <td class="note">Gemini 통합 제공</td>
+          </tr>
+          <tr class="border-image">
+            <td><div class="tool-name">Flux</div><div class="tool-maker">Black Forest Labs</div></td>
+            <td>Black Forest Labs (독일)</td>
+            <td class="note">Stable Diffusion 팀 창업, 고품질·오픈소스 공개</td>
+            <td><div class="feature-tags"><span class="ftag">T2I</span><span class="ftag">오픈소스</span><span class="ftag">고해상도</span></div></td>
+            <td><span class="badge badge-open">오픈소스</span></td>
+            <td class="note">FLUX.1 / Pro</td>
+          </tr>
+          <tr class="border-image">
+            <td><div class="tool-name">Leonardo AI</div><div class="tool-maker">Leonardo AI</div></td>
+            <td>Leonardo AI (호주)</td>
+            <td class="note">게임 에셋·캐릭터 특화, 파인튜닝 지원</td>
+            <td><div class="feature-tags"><span class="ftag">T2I</span><span class="ftag">게임에셋</span><span class="ftag">파인튜닝</span></div></td>
+            <td><span class="badge badge-freemium">프리미엄</span></td>
+            <td class="note">무료 150크레딧/일</td>
+          </tr>
+          <tr class="border-image">
+            <td><div class="tool-name">Ideogram</div><div class="tool-maker">Ideogram</div></td>
+            <td>Ideogram (미국)</td>
+            <td class="note">이미지 내 텍스트 렌더링 최강, 타이포그래피 특화</td>
+            <td><div class="feature-tags"><span class="ftag">T2I</span><span class="ftag">텍스트렌더링</span><span class="ftag">로고</span></div></td>
+            <td><span class="badge badge-freemium">프리미엄</span></td>
+            <td class="note">Ideogram 2.0</td>
+          </tr>
+          <tr class="border-image">
+            <td><div class="tool-name">Reve (Seedream)</div><div class="tool-maker">Reve AI</div></td>
+            <td>Reve AI (미국)</td>
+            <td class="note">2026년 급부상, 한국 감성 인물 이미지 고퀄</td>
+            <td><div class="feature-tags"><span class="ftag">T2I</span><span class="ftag">인물</span><span class="ftag">스타일</span></div></td>
+            <td><span class="badge badge-freemium">프리미엄</span></td>
+            <td class="note">2026 신흥 강자</td>
+          </tr>
+          <tr class="border-image">
+            <td><div class="tool-name">나노바나나</div><div class="tool-maker">나노바나나</div></td>
+            <td>나노바나나 (한국)</td>
+            <td class="note">한국 서비스, 국산 AI 이미지 생성, 2026년 주목</td>
+            <td><div class="feature-tags"><span class="ftag">T2I</span><span class="ftag">한국어</span><span class="ftag">캐릭터</span></div></td>
+            <td><span class="badge badge-freemium">프리미엄</span></td>
+            <td class="note">국내 인기 상승</td>
+          </tr>
+          <tr class="border-image">
+            <td><div class="tool-name">Canva AI</div><div class="tool-maker">Canva</div></td>
+            <td>Canva (호주)</td>
+            <td class="note">디자인 템플릿과 AI 이미지 생성 결합, 비전문가 친화</td>
+            <td><div class="feature-tags"><span class="ftag">T2I</span><span class="ftag">편집</span><span class="ftag">템플릿</span></div></td>
+            <td><span class="badge badge-freemium">프리미엄</span></td>
+            <td class="note">Magic Studio 통합</td>
+          </tr>
+          <tr class="border-image">
+            <td><div class="tool-name">NightCafe</div><div class="tool-maker">NightCafe</div></td>
+            <td>NightCafe (호주)</td>
+            <td class="note">다양한 스타일 모델 지원, 커뮤니티 활성</td>
+            <td><div class="feature-tags"><span class="ftag">T2I</span><span class="ftag">멀티모델</span><span class="ftag">커뮤니티</span></div></td>
+            <td><span class="badge badge-freemium">프리미엄</span></td>
+            <td class="note">무료 크레딧 일 제공</td>
+          </tr>
+          <tr class="border-image">
+            <td><div class="tool-name">Grok ImageGen</div><div class="tool-maker">xAI</div></td>
+            <td>xAI (미국)</td>
+            <td class="note">Grok 3 내 이미지 생성, 검열 완화로 창작 자유도 높음</td>
+            <td><div class="feature-tags"><span class="ftag">T2I</span><span class="ftag">무검열</span></div></td>
+            <td><span class="badge badge-freemium">프리미엄</span></td>
+            <td class="note">X Premium 포함</td>
+          </tr>
+          <tr class="border-image">
+            <td><div class="tool-name">Remove.bg / PhotoRoom</div><div class="tool-maker">Kaleido / PhotoRoom</div></td>
+            <td>Kaleido·PhotoRoom</td>
+            <td class="note">배경 제거 특화, 상품 사진 자동화 전문</td>
+            <td><div class="feature-tags"><span class="ftag">배경제거</span><span class="ftag">상품사진</span><span class="ftag">편집</span></div></td>
+            <td><span class="badge badge-freemium">프리미엄</span></td>
+            <td class="note">전 세계 디자이너 사용</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 3. 영상 생성 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon icon-video">🎬</div>
+      <div>
+        <div class="section-title">③ 영상 생성 · 편집 AI</div>
+        <div class="section-desc">텍스트/이미지 → 동영상 생성, AI 영상 편집</div>
+      </div>
+      <span class="section-count">12종</span>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>서비스명</th>
+            <th>개발사</th>
+            <th>핵심 특징</th>
+            <th>주요 기능 태그</th>
+            <th>요금제</th>
+            <th>비고</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="border-video">
+            <td><div class="tool-name">Sora 2</div><div class="tool-maker">OpenAI</div></td>
+            <td>OpenAI (미국)</td>
+            <td class="note">영화적 품질, 대화·감정 일관성, 최장 영상 생성</td>
+            <td><div class="feature-tags"><span class="ftag">T2V</span><span class="ftag">I2V</span><span class="ftag">시네마틱</span></div></td>
+            <td><span class="badge badge-paid">유료</span></td>
+            <td class="note">ChatGPT Pro $200/월</td>
+          </tr>
+          <tr class="border-video">
+            <td><div class="tool-name">Veo 3</div><div class="tool-maker">Google DeepMind</div></td>
+            <td>Google (미국)</td>
+            <td class="note">음성·음향 동시 생성, 최고 수준 영상 품질</td>
+            <td><div class="feature-tags"><span class="ftag">T2V</span><span class="ftag">음성동시</span><span class="ftag">4K</span></div></td>
+            <td><span class="badge badge-paid">유료</span></td>
+            <td class="note">Google Gemini Ultra 포함</td>
+          </tr>
+          <tr class="border-video">
+            <td><div class="tool-name">Kling 2.1</div><div class="tool-maker">Kuaishou</div></td>
+            <td>Kuaishou (중국)</td>
+            <td class="note">최장 3분 영상, 모션 품질 우수, 성가비 탁월</td>
+            <td><div class="feature-tags"><span class="ftag">T2V</span><span class="ftag">I2V</span><span class="ftag">장편</span></div></td>
+            <td><span class="badge badge-freemium">프리미엄</span></td>
+            <td class="note">Kling AI 사이트</td>
+          </tr>
+          <tr class="border-video">
+            <td><div class="tool-name">Runway Gen-4</div><div class="tool-maker">Runway</div></td>
+            <td>Runway (미국)</td>
+            <td class="note">전문 크리에이터 도구, 영화 후반작업 활용 증가</td>
+            <td><div class="feature-tags"><span class="ftag">T2V</span><span class="ftag">I2V</span><span class="ftag">편집</span></div></td>
+            <td><span class="badge badge-paid">유료</span></td>
+            <td class="note">Standard $15/월~</td>
+          </tr>
+          <tr class="border-video">
+            <td><div class="tool-name">Hailuo AI</div><div class="tool-maker">MiniMax</div></td>
+            <td>MiniMax (중국)</td>
+            <td class="note">고품질 무료 플랜, 720p 영상, 6초~</td>
+            <td><div class="feature-tags"><span class="ftag">T2V</span><span class="ftag">I2V</span><span class="ftag">무료</span></div></td>
+            <td><span class="badge badge-freemium">프리미엄</span></td>
+            <td class="note">무료 일일 크레딧</td>
+          </tr>
+          <tr class="border-video">
+            <td><div class="tool-name">Pika 2.0</div><div class="tool-maker">Pika Labs</div></td>
+            <td>Pika Labs (미국)</td>
+            <td class="note">애니메이션·스타일 변환, Pikaffects 특화</td>
+            <td><div class="feature-tags"><span class="ftag">T2V</span><span class="ftag">I2V</span><span class="ftag">애니메이션</span></div></td>
+            <td><span class="badge badge-freemium">프리미엄</span></td>
+            <td class="note">Pika 2.2 업데이트</td>
+          </tr>
+          <tr class="border-video">
+            <td><div class="tool-name">Higgsfield</div><div class="tool-maker">Higgsfield AI</div></td>
+            <td>Higgsfield AI (미국)</td>
+            <td class="note">여러 영상 AI 모델 통합 구독, 2026 급성장</td>
+            <td><div class="feature-tags"><span class="ftag">T2V</span><span class="ftag">멀티모델</span></div></td>
+            <td><span class="badge badge-paid">유료</span></td>
+            <td class="note">멀티모델 플랫폼</td>
+          </tr>
+          <tr class="border-video">
+            <td><div class="tool-name">Vrew</div><div class="tool-maker">보이저엑스</div></td>
+            <td>보이저엑스 (한국)</td>
+            <td class="note">자막·컷편집·나레이션 AI 자동화, 국내 유튜버 필수</td>
+            <td><div class="feature-tags"><span class="ftag">자막</span><span class="ftag">편집</span><span class="ftag">나레이션</span><span class="ftag">한국어</span></div></td>
+            <td><span class="badge badge-freemium">프리미엄</span></td>
+            <td class="note">국내 동영상 편집 1위</td>
+          </tr>
+          <tr class="border-video">
+            <td><div class="tool-name">CapCut AI</div><div class="tool-maker">ByteDance</div></td>
+            <td>ByteDance (중국)</td>
+            <td class="note">소셜미디어 최적화, 자동자막·텍스트→영상</td>
+            <td><div class="feature-tags"><span class="ftag">편집</span><span class="ftag">자막</span><span class="ftag">T2V</span><span class="ftag">SNS</span></div></td>
+            <td><span class="badge badge-freemium">프리미엄</span></td>
+            <td class="note">글로벌 2억+ 사용자</td>
+          </tr>
+          <tr class="border-video">
+            <td><div class="tool-name">Synthesia</div><div class="tool-maker">Synthesia</div></td>
+            <td>Synthesia (영국)</td>
+            <td class="note">AI 아바타로 기업 영상·교육 콘텐츠 자동 제작</td>
+            <td><div class="feature-tags"><span class="ftag">AI아바타</span><span class="ftag">기업영상</span><span class="ftag">다국어</span></div></td>
+            <td><span class="badge badge-paid">유료</span></td>
+            <td class="note">Starter $29/월~</td>
+          </tr>
+          <tr class="border-video">
+            <td><div class="tool-name">Descript</div><div class="tool-maker">Descript</div></td>
+            <td>Descript (미국)</td>
+            <td class="note">텍스트 기반 영상 편집, 팟캐스트·유튜브 후반작업</td>
+            <td><div class="feature-tags"><span class="ftag">편집</span><span class="ftag">팟캐스트</span><span class="ftag">오디오편집</span></div></td>
+            <td><span class="badge badge-freemium">프리미엄</span></td>
+            <td class="note">Hobbyist $24/월</td>
+          </tr>
+          <tr class="border-video">
+            <td><div class="tool-name">InVideo AI</div><div class="tool-maker">InVideo</div></td>
+            <td>InVideo (미국)</td>
+            <td class="note">텍스트 프롬프트 → 완성 영상, 스톡 미디어 연동</td>
+            <td><div class="feature-tags"><span class="ftag">T2V</span><span class="ftag">템플릿</span><span class="ftag">SNS</span></div></td>
+            <td><span class="badge badge-freemium">프리미엄</span></td>
+            <td class="note">Plus $25/월~</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 4. 오디오·음악 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon icon-audio">🎵</div>
+      <div>
+        <div class="section-title">④ 오디오 · 음악 생성 AI</div>
+        <div class="section-desc">음악, 음성, TTS, 보이스 클로닝, 음향 효과 생성</div>
+      </div>
+      <span class="section-count">10종</span>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>서비스명</th>
+            <th>개발사</th>
+            <th>핵심 특징</th>
+            <th>주요 기능 태그</th>
+            <th>요금제</th>
+            <th>비고</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="border-audio">
+            <td><div class="tool-name">Suno</div><div class="tool-maker">Suno AI</div></td>
+            <td>Suno AI (미국)</td>
+            <td class="note">텍스트 → 완성 노래(보컬+반주), 음악 생성 최강자</td>
+            <td><div class="feature-tags"><span class="ftag">T2Music</span><span class="ftag">보컬</span><span class="ftag">작사작곡</span></div></td>
+            <td><span class="badge badge-freemium">프리미엄</span></td>
+            <td class="note">Pro $10/월~</td>
+          </tr>
+          <tr class="border-audio">
+            <td><div class="tool-name">Udio</div><div class="tool-maker">Udio</div></td>
+            <td>Udio (미국)</td>
+            <td class="note">음악 품질·스타일 다양성 최상위, Suno 최대 경쟁자</td>
+            <td><div class="feature-tags"><span class="ftag">T2Music</span><span class="ftag">보컬</span><span class="ftag">장르다양</span></div></td>
+            <td><span class="badge badge-freemium">프리미엄</span></td>
+            <td class="note">Standard $10/월~</td>
+          </tr>
+          <tr class="border-audio">
+            <td><div class="tool-name">ElevenLabs</div><div class="tool-maker">ElevenLabs</div></td>
+            <td>ElevenLabs (미국)</td>
+            <td class="note">음성 복제·TTS 업계 1위, 29개국 언어, 감정 표현</td>
+            <td><div class="feature-tags"><span class="ftag">TTS</span><span class="ftag">보이스클론</span><span class="ftag">나레이션</span></div></td>
+            <td><span class="badge badge-freemium">프리미엄</span></td>
+            <td class="note">Starter $5/월~</td>
+          </tr>
+          <tr class="border-audio">
+            <td><div class="tool-name">Soundraw</div><div class="tool-maker">Soundraw</div></td>
+            <td>Soundraw (일본)</td>
+            <td class="note">로열티프리 BGM 자동 생성, 길이·무드·장르 조정</td>
+            <td><div class="feature-tags"><span class="ftag">BGM</span><span class="ftag">로열티프리</span><span class="ftag">영상배경음</span></div></td>
+            <td><span class="badge badge-paid">유료</span></td>
+            <td class="note">$16.99/월~</td>
+          </tr>
+          <tr class="border-audio">
+            <td><div class="tool-name">MusicGen (Meta)</div><div class="tool-maker">Meta</div></td>
+            <td>Meta (미국)</td>
+            <td class="note">오픈소스 음악 LM, 텍스트/오디오 입력 지원</td>
+            <td><div class="feature-tags"><span class="ftag">T2Music</span><span class="ftag">오픈소스</span></div></td>
+            <td><span class="badge badge-open">오픈소스</span></td>
+            <td class="note">HuggingFace 배포</td>
+          </tr>
+          <tr class="border-audio">
+            <td><div class="tool-name">Mubert</div><div class="tool-maker">Mubert</div></td>
+            <td>Mubert (미국)</td>
+            <td class="note">AI DJ·스트리밍 음악 생성, 동영상 제작자 특화</td>
+            <td><div class="feature-tags"><span class="ftag">스트리밍음악</span><span class="ftag">BGM</span><span class="ftag">API</span></div></td>
+            <td><span class="badge badge-freemium">프리미엄</span></td>
+            <td class="note">Ambassador $14/월~</td>
+          </tr>
+          <tr class="border-audio">
+            <td><div class="tool-name">Moises AI</div><div class="tool-maker">Moises</div></td>
+            <td>Moises (브라질)</td>
+            <td class="note">오디오 스템 분리, 반주/보컬 분리, 뮤지션 도구</td>
+            <td><div class="feature-tags"><span class="ftag">스템분리</span><span class="ftag">음원편집</span></div></td>
+            <td><span class="badge badge-freemium">프리미엄</span></td>
+            <td class="note">Pro $3.99/월~</td>
+          </tr>
+          <tr class="border-audio">
+            <td><div class="tool-name">AIVA</div><div class="tool-maker">AIVA Technologies</div></td>
+            <td>AIVA (룩셈부르크)</td>
+            <td class="note">클래식·영화음악 작곡 특화, 감정 기반 생성</td>
+            <td><div class="feature-tags"><span class="ftag">작곡</span><span class="ftag">클래식</span><span class="ftag">BGM</span></div></td>
+            <td><span class="badge badge-freemium">프리미엄</span></td>
+            <td class="note">Pro €33/월~</td>
+          </tr>
+          <tr class="border-audio">
+            <td><div class="tool-name">Boomy</div><div class="tool-maker">Boomy</div></td>
+            <td>Boomy (미국)</td>
+            <td class="note">1분 안에 곡 완성, 스트리밍 수익 분배 시스템</td>
+            <td><div class="feature-tags"><span class="ftag">T2Music</span><span class="ftag">수익창출</span></div></td>
+            <td><span class="badge badge-freemium">프리미엄</span></td>
+            <td class="note">Personal $2.99/월~</td>
+          </tr>
+          <tr class="border-audio">
+            <td><div class="tool-name">Kits AI</div><div class="tool-maker">Kits AI</div></td>
+            <td>Kits AI (미국)</td>
+            <td class="note">AI 보컬 모델 훈련, 보이스 변환·커버송 제작</td>
+            <td><div class="feature-tags"><span class="ftag">보이스변환</span><span class="ftag">커버송</span><span class="ftag">보이스훈련</span></div></td>
+            <td><span class="badge badge-freemium">프리미엄</span></td>
+            <td class="note">Pro $9.99/월~</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 5. 코딩 보조 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon icon-code">💻</div>
+      <div>
+        <div class="section-title">⑤ 코딩 · 개발 보조 AI</div>
+        <div class="section-desc">코드 자동완성, 생성, 디버깅, 테스트, 앱 빌더</div>
+      </div>
+      <span class="section-count">10종</span>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>서비스명</th>
+            <th>개발사</th>
+            <th>핵심 특징</th>
+            <th>주요 기능 태그</th>
+            <th>요금제</th>
+            <th>비고</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="border-code">
+            <td><div class="tool-name">GitHub Copilot</div><div class="tool-maker">GitHub / OpenAI</div></td>
+            <td>GitHub (미국)</td>
+            <td class="note">개발자 IDE 통합 최강자, 코드 자동완성·설명·테스트</td>
+            <td><div class="feature-tags"><span class="ftag">자동완성</span><span class="ftag">IDE통합</span><span class="ftag">테스트생성</span></div></td>
+            <td><span class="badge badge-paid">유료</span></td>
+            <td class="note">$10/월~</td>
+          </tr>
+          <tr class="border-code">
+            <td><div class="tool-name">Cursor</div><div class="tool-maker">Anysphere</div></td>
+            <td>Anysphere (미국)</td>
+            <td class="note">AI 네이티브 IDE, 전체 코드베이스 이해, 폭발적 성장</td>
+            <td><div class="feature-tags"><span class="ftag">AI-IDE</span><span class="ftag">코드베이스</span><span class="ftag">자동완성</span></div></td>
+            <td><span class="badge badge-freemium">프리미엄</span></td>
+            <td class="note">Pro $20/월~</td>
+          </tr>
+          <tr class="border-code">
+            <td><div class="tool-name">Claude Code</div><div class="tool-maker">Anthropic</div></td>
+            <td>Anthropic (미국)</td>
+            <td class="note">터미널 기반 에이전틱 코딩, 파일 직접 수정</td>
+            <td><div class="feature-tags"><span class="ftag">에이전틱</span><span class="ftag">터미널</span><span class="ftag">CLI</span></div></td>
+            <td><span class="badge badge-paid">유료</span></td>
+            <td class="note">Claude API 과금</td>
+          </tr>
+          <tr class="border-code">
+            <td><div class="tool-name">Amazon Q Developer</div><div class="tool-maker">AWS</div></td>
+            <td>Amazon (미국)</td>
+            <td class="note">AWS 통합 개발 도우미, 보안 취약점 감지</td>
+            <td><div class="feature-tags"><span class="ftag">자동완성</span><span class="ftag">AWS통합</span><span class="ftag">보안</span></div></td>
+            <td><span class="badge badge-freemium">프리미엄</span></td>
+            <td class="note">Free Tier 있음</td>
+          </tr>
+          <tr class="border-code">
+            <td><div class="tool-name">Lovable</div><div class="tool-maker">Lovable</div></td>
+            <td>Lovable (스웨덴)</td>
+            <td class="note">자연어 → 웹앱 빌더, 비개발자도 앱 제작 가능</td>
+            <td><div class="feature-tags"><span class="ftag">앱빌더</span><span class="ftag">T2App</span><span class="ftag">노코드</span></div></td>
+            <td><span class="badge badge-freemium">프리미엄</span></td>
+            <td class="note">Starter $20/월~</td>
+          </tr>
+          <tr class="border-code">
+            <td><div class="tool-name">Bolt.new</div><div class="tool-maker">StackBlitz</div></td>
+            <td>StackBlitz (미국)</td>
+            <td class="note">브라우저 내 풀스택 앱 즉시 생성·배포</td>
+            <td><div class="feature-tags"><span class="ftag">T2App</span><span class="ftag">풀스택</span><span class="ftag">배포</span></div></td>
+            <td><span class="badge badge-freemium">프리미엄</span></td>
+            <td class="note">무료 크레딧 제공</td>
+          </tr>
+          <tr class="border-code">
+            <td><div class="tool-name">Windsurf</div><div class="tool-maker">Codeium</div></td>
+            <td>Codeium (미국)</td>
+            <td class="note">Cursor 대항마, 에이전틱 AI IDE, 무료 플랜 강점</td>
+            <td><div class="feature-tags"><span class="ftag">AI-IDE</span><span class="ftag">에이전틱</span><span class="ftag">무료</span></div></td>
+            <td><span class="badge badge-freemium">프리미엄</span></td>
+            <td class="note">Pro $15/월~</td>
+          </tr>
+          <tr class="border-code">
+            <td><div class="tool-name">Replit AI</div><div class="tool-maker">Replit</div></td>
+            <td>Replit (미국)</td>
+            <td class="note">브라우저 기반 코딩 환경, 교육용 AI 코딩 선두</td>
+            <td><div class="feature-tags"><span class="ftag">온라인IDE</span><span class="ftag">교육</span><span class="ftag">협업</span></div></td>
+            <td><span class="badge badge-freemium">프리미엄</span></td>
+            <td class="note">Core $25/월~</td>
+          </tr>
+          <tr class="border-code">
+            <td><div class="tool-name">Tabnine</div><div class="tool-maker">Tabnine</div></td>
+            <td>Tabnine (이스라엘)</td>
+            <td class="note">사내 코드 학습 가능, 프라이버시 중심 기업 특화</td>
+            <td><div class="feature-tags"><span class="ftag">자동완성</span><span class="ftag">프라이버시</span><span class="ftag">B2B</span></div></td>
+            <td><span class="badge badge-paid">유료</span></td>
+            <td class="note">Pro $12/월~</td>
+          </tr>
+          <tr class="border-code">
+            <td><div class="tool-name">v0 (Vercel)</div><div class="tool-maker">Vercel</div></td>
+            <td>Vercel (미국)</td>
+            <td class="note">UI 컴포넌트 텍스트 생성, 프론트엔드 빌더</td>
+            <td><div class="feature-tags"><span class="ftag">UI생성</span><span class="ftag">React</span><span class="ftag">프론트엔드</span></div></td>
+            <td><span class="badge badge-freemium">프리미엄</span></td>
+            <td class="note">무료 제한 크레딧</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 6. 글쓰기 특화 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon icon-writing">✍️</div>
+      <div>
+        <div class="section-title">⑥ 글쓰기 · 콘텐츠 특화 AI</div>
+        <div class="section-desc">마케팅 카피, 블로그, 교정·교열, 번역 특화 도구</div>
+      </div>
+      <span class="section-count">8종</span>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>서비스명</th>
+            <th>개발사</th>
+            <th>핵심 특징</th>
+            <th>주요 기능 태그</th>
+            <th>요금제</th>
+            <th>비고</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="border-writing">
+            <td><div class="tool-name">Jasper</div><div class="tool-maker">Jasper AI</div></td>
+            <td>Jasper AI (미국)</td>
+            <td class="note">마케팅 카피 특화, 브랜드 음성 학습, 팀 협업</td>
+            <td><div class="feature-tags"><span class="ftag">마케팅카피</span><span class="ftag">SEO</span><span class="ftag">브랜드</span></div></td>
+            <td><span class="badge badge-paid">유료</span></td>
+            <td class="note">Creator $39/월~</td>
+          </tr>
+          <tr class="border-writing">
+            <td><div class="tool-name">Copy.ai</div><div class="tool-maker">Copy.ai</div></td>
+            <td>Copy.ai (미국)</td>
+            <td class="note">GTM(마케팅 자동화) 특화, 워크플로우 자동화</td>
+            <td><div class="feature-tags"><span class="ftag">카피라이팅</span><span class="ftag">GTM</span><span class="ftag">자동화</span></div></td>
+            <td><span class="badge badge-freemium">프리미엄</span></td>
+            <td class="note">Starter $49/월~</td>
+          </tr>
+          <tr class="border-writing">
+            <td><div class="tool-name">Grammarly</div><div class="tool-maker">Grammarly</div></td>
+            <td>Grammarly (미국)</td>
+            <td class="note">문법·문체 교정 1위, 생성형 AI 업그레이드, 전 플랫폼</td>
+            <td><div class="feature-tags"><span class="ftag">교정</span><span class="ftag">문체개선</span><span class="ftag">이메일</span></div></td>
+            <td><span class="badge badge-freemium">프리미엄</span></td>
+            <td class="note">Premium $30/월~</td>
+          </tr>
+          <tr class="border-writing">
+            <td><div class="tool-name">Notion AI</div><div class="tool-maker">Notion Labs</div></td>
+            <td>Notion Labs (미국)</td>
+            <td class="note">노션 문서 내 AI 생성·요약·번역 통합</td>
+            <td><div class="feature-tags"><span class="ftag">문서생성</span><span class="ftag">요약</span><span class="ftag">번역</span></div></td>
+            <td><span class="badge badge-paid">유료</span></td>
+            <td class="note">AI 애드온 $10/월~</td>
+          </tr>
+          <tr class="border-writing">
+            <td><div class="tool-name">DeepL</div><div class="tool-maker">DeepL</div></td>
+            <td>DeepL (독일)</td>
+            <td class="note">번역 품질 세계 최상위, 33개 언어, 문서 번역</td>
+            <td><div class="feature-tags"><span class="ftag">번역</span><span class="ftag">문서번역</span><span class="ftag">API</span></div></td>
+            <td><span class="badge badge-freemium">프리미엄</span></td>
+            <td class="note">Pro €8.74/월~</td>
+          </tr>
+          <tr class="border-writing">
+            <td><div class="tool-name">Writesonic</div><div class="tool-maker">Writesonic</div></td>
+            <td>Writesonic (미국)</td>
+            <td class="note">SEO 블로그·광고 카피 특화, Chatsonic 포함</td>
+            <td><div class="feature-tags"><span class="ftag">블로그</span><span class="ftag">SEO</span><span class="ftag">광고카피</span></div></td>
+            <td><span class="badge badge-freemium">프리미엄</span></td>
+            <td class="note">Individual $16/월~</td>
+          </tr>
+          <tr class="border-writing">
+            <td><div class="tool-name">Quillbot</div><div class="tool-maker">Quillbot</div></td>
+            <td>Quillbot (미국)</td>
+            <td class="note">패러프레이징·요약·표절검사 올인원</td>
+            <td><div class="feature-tags"><span class="ftag">패러프레이즈</span><span class="ftag">요약</span><span class="ftag">표절검사</span></div></td>
+            <td><span class="badge badge-freemium">프리미엄</span></td>
+            <td class="note">Premium $9.95/월~</td>
+          </tr>
+          <tr class="border-writing">
+            <td><div class="tool-name">Gamma</div><div class="tool-maker">Gamma</div></td>
+            <td>Gamma (미국)</td>
+            <td class="note">텍스트 → 프레젠테이션·문서·웹페이지 자동 생성</td>
+            <td><div class="feature-tags"><span class="ftag">PT생성</span><span class="ftag">문서</span><span class="ftag">웹페이지</span></div></td>
+            <td><span class="badge badge-freemium">프리미엄</span></td>
+            <td class="note">Plus $10/월~</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 7. 검색 리서치 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon icon-search">🔍</div>
+      <div>
+        <div class="section-title">⑦ AI 검색 · 리서치 도구</div>
+        <div class="section-desc">실시간 웹 검색, 출처 인용, 심층 연구 자동화</div>
+      </div>
+      <span class="section-count">6종</span>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>서비스명</th>
+            <th>개발사</th>
+            <th>핵심 특징</th>
+            <th>주요 기능 태그</th>
+            <th>요금제</th>
+            <th>비고</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="border-search">
+            <td><div class="tool-name">Perplexity AI</div><div class="tool-maker">Perplexity</div></td>
+            <td>Perplexity (미국)</td>
+            <td class="note">출처 인용 검색, Deep Research, 학술·실시간 특화</td>
+            <td><div class="feature-tags"><span class="ftag">실시간검색</span><span class="ftag">출처인용</span><span class="ftag">심층리서치</span></div></td>
+            <td><span class="badge badge-freemium">프리미엄</span></td>
+            <td class="note">Pro $20/월~</td>
+          </tr>
+          <tr class="border-search">
+            <td><div class="tool-name">You.com</div><div class="tool-maker">You.com</div></td>
+            <td>You.com (미국)</td>
+            <td class="note">AI 검색 엔진, 멀티모델 선택, 코드·리서치 모드</td>
+            <td><div class="feature-tags"><span class="ftag">AI검색</span><span class="ftag">멀티모델</span><span class="ftag">코드모드</span></div></td>
+            <td><span class="badge badge-freemium">프리미엄</span></td>
+            <td class="note">Pro $15/월~</td>
+          </tr>
+          <tr class="border-search">
+            <td><div class="tool-name">NotebookLM</div><div class="tool-maker">Google</div></td>
+            <td>Google (미국)</td>
+            <td class="note">업로드 문서 기반 전용 AI, 팟캐스트 오디오 요약 생성</td>
+            <td><div class="feature-tags"><span class="ftag">문서기반</span><span class="ftag">요약</span><span class="ftag">오디오오버뷰</span></div></td>
+            <td><span class="badge badge-freemium">프리미엄</span></td>
+            <td class="note">무료 (Plus 구독 옵션)</td>
+          </tr>
+          <tr class="border-search">
+            <td><div class="tool-name">Elicit</div><div class="tool-maker">Ought</div></td>
+            <td>Ought (미국)</td>
+            <td class="note">학술 논문 검색·요약·비교 특화, 연구자 필수</td>
+            <td><div class="feature-tags"><span class="ftag">학술논문</span><span class="ftag">연구자동화</span><span class="ftag">요약</span></div></td>
+            <td><span class="badge badge-freemium">프리미엄</span></td>
+            <td class="note">Basic $10/월~</td>
+          </tr>
+          <tr class="border-search">
+            <td><div class="tool-name">Consensus</div><div class="tool-maker">Consensus</div></td>
+            <td>Consensus (미국)</td>
+            <td class="note">과학적 증거 기반 검색, 논문 합의 여부 요약</td>
+            <td><div class="feature-tags"><span class="ftag">학술검색</span><span class="ftag">증거기반</span><span class="ftag">논문요약</span></div></td>
+            <td><span class="badge badge-freemium">프리미엄</span></td>
+            <td class="note">Premium $8.99/월~</td>
+          </tr>
+          <tr class="border-search">
+            <td><div class="tool-name">Tavily</div><div class="tool-maker">Tavily</div></td>
+            <td>Tavily (미국)</td>
+            <td class="note">AI 에이전트용 실시간 검색 API, LLM 연동 최적화</td>
+            <td><div class="feature-tags"><span class="ftag">검색API</span><span class="ftag">에이전트연동</span><span class="ftag">리서치</span></div></td>
+            <td><span class="badge badge-freemium">프리미엄</span></td>
+            <td class="note">개발자·에이전트 특화</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 8. 비즈니스 자동화 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon icon-business">⚙️</div>
+      <div>
+        <div class="section-title">⑧ 비즈니스 자동화 · 업무 생산성 AI</div>
+        <div class="section-desc">워크플로우 자동화, CRM, 이메일, HR, 데이터 분석</div>
+      </div>
+      <span class="section-count">8종</span>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>서비스명</th>
+            <th>개발사</th>
+            <th>핵심 특징</th>
+            <th>주요 기능 태그</th>
+            <th>요금제</th>
+            <th>비고</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="border-business">
+            <td><div class="tool-name">Zapier AI</div><div class="tool-maker">Zapier</div></td>
+            <td>Zapier (미국)</td>
+            <td class="note">7,000+ 앱 연동, AI 에이전트 오케스트레이션</td>
+            <td><div class="feature-tags"><span class="ftag">워크플로우</span><span class="ftag">자동화</span><span class="ftag">앱통합</span></div></td>
+            <td><span class="badge badge-freemium">프리미엄</span></td>
+            <td class="note">Starter $19.99/월~</td>
+          </tr>
+          <tr class="border-business">
+            <td><div class="tool-name">Make (Integromat)</div><div class="tool-maker">Make</div></td>
+            <td>Make (체코)</td>
+            <td class="note">시각적 자동화 빌더, Zapier 대안, 복잡 워크플로우</td>
+            <td><div class="feature-tags"><span class="ftag">워크플로우</span><span class="ftag">시각화</span><span class="ftag">자동화</span></div></td>
+            <td><span class="badge badge-freemium">프리미엄</span></td>
+            <td class="note">Core $9/월~</td>
+          </tr>
+          <tr class="border-business">
+            <td><div class="tool-name">Salesforce Einstein</div><div class="tool-maker">Salesforce</div></td>
+            <td>Salesforce (미국)</td>
+            <td class="note">CRM AI 통합, 고객 인사이트·영업 자동화</td>
+            <td><div class="feature-tags"><span class="ftag">CRM</span><span class="ftag">영업자동화</span><span class="ftag">고객분석</span></div></td>
+            <td><span class="badge badge-paid">유료</span></td>
+            <td class="note">Enterprise 이상</td>
+          </tr>
+          <tr class="border-business">
+            <td><div class="tool-name">HubSpot AI</div><div class="tool-maker">HubSpot</div></td>
+            <td>HubSpot (미국)</td>
+            <td class="note">마케팅·영업·서비스 전 허브에 AI 통합</td>
+            <td><div class="feature-tags"><span class="ftag">마케팅</span><span class="ftag">CRM</span><span class="ftag">콘텐츠생성</span></div></td>
+            <td><span class="badge badge-freemium">프리미엄</span></td>
+            <td class="note">Starter $20/월~</td>
+          </tr>
+          <tr class="border-business">
+            <td><div class="tool-name">Intercom Fin</div><div class="tool-maker">Intercom</div></td>
+            <td>Intercom (미국)</td>
+            <td class="note">AI 고객지원 에이전트, 티켓 자동 해결률 50%+</td>
+            <td><div class="feature-tags"><span class="ftag">고객지원</span><span class="ftag">챗봇</span><span class="ftag">티켓자동화</span></div></td>
+            <td><span class="badge badge-paid">유료</span></td>
+            <td class="note">Essential $39/월~</td>
+          </tr>
+          <tr class="border-business">
+            <td><div class="tool-name">Glean</div><div class="tool-maker">Glean</div></td>
+            <td>Glean (미국)</td>
+            <td class="note">사내 지식 검색 AI, 슬랙·드라이브·노션 통합 검색</td>
+            <td><div class="feature-tags"><span class="ftag">기업검색</span><span class="ftag">지식관리</span><span class="ftag">RAG</span></div></td>
+            <td><span class="badge badge-paid">유료</span></td>
+            <td class="note">엔터프라이즈 전용</td>
+          </tr>
+          <tr class="border-business">
+            <td><div class="tool-name">Cohere</div><div class="tool-maker">Cohere</div></td>
+            <td>Cohere (캐나다)</td>
+            <td class="note">기업용 LLM·RAG 플랫폼, 프라이빗 배포 특화</td>
+            <td><div class="feature-tags"><span class="ftag">B2B LLM</span><span class="ftag">RAG</span><span class="ftag">온프레미스</span></div></td>
+            <td><span class="badge badge-paid">유료</span></td>
+            <td class="note">엔터프라이즈 전용</td>
+          </tr>
+          <tr class="border-business">
+            <td><div class="tool-name">Microsoft 365 Copilot</div><div class="tool-maker">Microsoft</div></td>
+            <td>Microsoft (미국)</td>
+            <td class="note">Word·Excel·PPT·Teams·Outlook 전 제품 AI 통합</td>
+            <td><div class="feature-tags"><span class="ftag">Office통합</span><span class="ftag">문서생성</span><span class="ftag">데이터분석</span></div></td>
+            <td><span class="badge badge-paid">유료</span></td>
+            <td class="note">$30/유저/월</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 9. 디자인 특화 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon icon-design">🖌️</div>
+      <div>
+        <div class="section-title">⑨ 디자인 · UI/UX 특화 AI</div>
+        <div class="section-desc">로고, 웹사이트, UI, 프레젠테이션 자동 생성</div>
+      </div>
+      <span class="section-count">6종</span>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>서비스명</th>
+            <th>개발사</th>
+            <th>핵심 특징</th>
+            <th>주요 기능 태그</th>
+            <th>요금제</th>
+            <th>비고</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="border-design">
+            <td><div class="tool-name">Figma AI</div><div class="tool-maker">Figma</div></td>
+            <td>Figma (미국)</td>
+            <td class="note">UI 컴포넌트 AI 생성, 디자인 시스템 자동화</td>
+            <td><div class="feature-tags"><span class="ftag">UI생성</span><span class="ftag">컴포넌트</span><span class="ftag">프로토타입</span></div></td>
+            <td><span class="badge badge-paid">유료</span></td>
+            <td class="note">Professional $15/월~</td>
+          </tr>
+          <tr class="border-design">
+            <td><div class="tool-name">Canva AI</div><div class="tool-maker">Canva</div></td>
+            <td>Canva (호주)</td>
+            <td class="note">비전문가용 디자인 자동화, Magic Studio 통합</td>
+            <td><div class="feature-tags"><span class="ftag">그래픽</span><span class="ftag">SNS디자인</span><span class="ftag">PT</span></div></td>
+            <td><span class="badge badge-freemium">프리미엄</span></td>
+            <td class="note">Pro $15/월~</td>
+          </tr>
+          <tr class="border-design">
+            <td><div class="tool-name">Looka</div><div class="tool-maker">Looka</div></td>
+            <td>Looka (캐나다)</td>
+            <td class="note">AI 로고 생성기, 브랜드 아이덴티티 자동 패키지</td>
+            <td><div class="feature-tags"><span class="ftag">로고생성</span><span class="ftag">브랜드키트</span></div></td>
+            <td><span class="badge badge-paid">유료</span></td>
+            <td class="note">Basic $20 일회성~</td>
+          </tr>
+          <tr class="border-design">
+            <td><div class="tool-name">Framer AI</div><div class="tool-maker">Framer</div></td>
+            <td>Framer (네덜란드)</td>
+            <td class="note">텍스트 프롬프트 → 완성 웹사이트, 코드 불필요</td>
+            <td><div class="feature-tags"><span class="ftag">웹사이트</span><span class="ftag">노코드</span><span class="ftag">랜딩페이지</span></div></td>
+            <td><span class="badge badge-freemium">프리미엄</span></td>
+            <td class="note">Mini $5/월~</td>
+          </tr>
+          <tr class="border-design">
+            <td><div class="tool-name">Beautiful.ai</div><div class="tool-maker">Beautiful.ai</div></td>
+            <td>Beautiful.ai (미국)</td>
+            <td class="note">AI 기반 PT 자동 레이아웃, 스마트 슬라이드</td>
+            <td><div class="feature-tags"><span class="ftag">PT자동화</span><span class="ftag">레이아웃</span></div></td>
+            <td><span class="badge badge-paid">유료</span></td>
+            <td class="note">Pro $12/월~</td>
+          </tr>
+          <tr class="border-design">
+            <td><div class="tool-name">Wix ADI</div><div class="tool-maker">Wix</div></td>
+            <td>Wix (이스라엘)</td>
+            <td class="note">AI 웹사이트 빌더, SEO 최적화 자동 생성</td>
+            <td><div class="feature-tags"><span class="ftag">웹사이트</span><span class="ftag">SEO</span><span class="ftag">이커머스</span></div></td>
+            <td><span class="badge badge-freemium">프리미엄</span></td>
+            <td class="note">Light $17/월~</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 10. 3D·아바타 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon icon-3d">🧊</div>
+      <div>
+        <div class="section-title">⑩ 3D · 아바타 · XR 생성 AI</div>
+        <div class="section-desc">3D 모델, 가상 아바타, 게임 에셋, 공간 콘텐츠 생성</div>
+      </div>
+      <span class="section-count">5종</span>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>서비스명</th>
+            <th>개발사</th>
+            <th>핵심 특징</th>
+            <th>주요 기능 태그</th>
+            <th>요금제</th>
+            <th>비고</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="border-3d">
+            <td><div class="tool-name">Meshy</div><div class="tool-maker">Meshy</div></td>
+            <td>Meshy (미국)</td>
+            <td class="note">텍스트/이미지 → 3D 모델, 게임 에셋 특화</td>
+            <td><div class="feature-tags"><span class="ftag">T23D</span><span class="ftag">게임에셋</span><span class="ftag">텍스처</span></div></td>
+            <td><span class="badge badge-freemium">프리미엄</span></td>
+            <td class="note">Pro $20/월~</td>
+          </tr>
+          <tr class="border-3d">
+            <td><div class="tool-name">Luma AI</div><div class="tool-maker">Luma AI</div></td>
+            <td>Luma AI (미국)</td>
+            <td class="note">NeRF 3D 캡처, Dream Machine 영상 생성 병행</td>
+            <td><div class="feature-tags"><span class="ftag">3D캡처</span><span class="ftag">NeRF</span><span class="ftag">T2V</span></div></td>
+            <td><span class="badge badge-freemium">프리미엄</span></td>
+            <td class="note">무료 트라이얼</td>
+          </tr>
+          <tr class="border-3d">
+            <td><div class="tool-name">Ready Player Me</div><div class="tool-maker">Ready Player Me</div></td>
+            <td>Ready Player Me (에스토니아)</td>
+            <td class="note">메타버스·게임용 AI 아바타 생성, 4,000+ 앱 통합</td>
+            <td><div class="feature-tags"><span class="ftag">아바타</span><span class="ftag">메타버스</span><span class="ftag">SDK</span></div></td>
+            <td><span class="badge badge-freemium">프리미엄</span></td>
+            <td class="note">무료 기본 제공</td>
+          </tr>
+          <tr class="border-3d">
+            <td><div class="tool-name">Spline AI</div><div class="tool-maker">Spline</div></td>
+            <td>Spline (미국)</td>
+            <td class="note">브라우저 기반 3D 디자인, AI 생성 결합</td>
+            <td><div class="feature-tags"><span class="ftag">3D디자인</span><span class="ftag">웹3D</span><span class="ftag">인터랙티브</span></div></td>
+            <td><span class="badge badge-freemium">프리미엄</span></td>
+            <td class="note">Pro $7/월~</td>
+          </tr>
+          <tr class="border-3d">
+            <td><div class="tool-name">Kaedim</div><div class="tool-maker">Kaedim</div></td>
+            <td>Kaedim (영국)</td>
+            <td class="note">이미지 → 3D 게임 에셋 자동 변환, 게임 스튜디오 특화</td>
+            <td><div class="feature-tags"><span class="ftag">I23D</span><span class="ftag">게임스튜디오</span></div></td>
+            <td><span class="badge badge-paid">유료</span></td>
+            <td class="note">Starter $250/월~</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 11. AI 에이전트 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon icon-agent">🤖</div>
+      <div>
+        <div class="section-title">⑪ AI 에이전트 · 자율 작업 수행</div>
+        <div class="section-desc">멀티스텝 작업 자율 수행, 웹 브라우징, 에이전트 오케스트레이션</div>
+      </div>
+      <span class="section-count">6종</span>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>서비스명</th>
+            <th>개발사</th>
+            <th>핵심 특징</th>
+            <th>주요 기능 태그</th>
+            <th>요금제</th>
+            <th>비고</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="border-agent">
+            <td><div class="tool-name">OpenAI Operator</div><div class="tool-maker">OpenAI</div></td>
+            <td>OpenAI (미국)</td>
+            <td class="note">웹 브라우저 자율 조작, 예약·구매 등 실제 작업 수행</td>
+            <td><div class="feature-tags"><span class="ftag">웹자동화</span><span class="ftag">브라우저</span><span class="ftag">에이전트</span></div></td>
+            <td><span class="badge badge-paid">유료</span></td>
+            <td class="note">ChatGPT Pro 포함</td>
+          </tr>
+          <tr class="border-agent">
+            <td><div class="tool-name">AutoGPT</div><div class="tool-maker">Significant Gravitas</div></td>
+            <td>Significant Gravitas</td>
+            <td class="note">자율 멀티스텝 에이전트, 오픈소스 파이오니어</td>
+            <td><div class="feature-tags"><span class="ftag">자율에이전트</span><span class="ftag">오픈소스</span><span class="ftag">멀티스텝</span></div></td>
+            <td><span class="badge badge-open">오픈소스</span></td>
+            <td class="note">GitHub 공개</td>
+          </tr>
+          <tr class="border-agent">
+            <td><div class="tool-name">LangChain / LangGraph</div><div class="tool-maker">LangChain</div></td>
+            <td>LangChain (미국)</td>
+            <td class="note">AI 에이전트·RAG 앱 개발 프레임워크 표준</td>
+            <td><div class="feature-tags"><span class="ftag">에이전트프레임워크</span><span class="ftag">RAG</span><span class="ftag">개발자</span></div></td>
+            <td><span class="badge badge-open">오픈소스</span></td>
+            <td class="note">LangSmith 유료 모니터링</td>
+          </tr>
+          <tr class="border-agent">
+            <td><div class="tool-name">CrewAI</div><div class="tool-maker">CrewAI</div></td>
+            <td>CrewAI (미국)</td>
+            <td class="note">다중 에이전트 협업 오케스트레이션 프레임워크</td>
+            <td><div class="feature-tags"><span class="ftag">멀티에이전트</span><span class="ftag">협업</span><span class="ftag">오픈소스</span></div></td>
+            <td><span class="badge badge-open">오픈소스</span></td>
+            <td class="note">Enterprise 플랜 있음</td>
+          </tr>
+          <tr class="border-agent">
+            <td><div class="tool-name">n8n AI</div><div class="tool-maker">n8n</div></td>
+            <td>n8n (독일)</td>
+            <td class="note">오픈소스 워크플로우 자동화 + AI 노드, 셀프 호스팅</td>
+            <td><div class="feature-tags"><span class="ftag">워크플로우</span><span class="ftag">자동화</span><span class="ftag">셀프호스팅</span></div></td>
+            <td><span class="badge badge-open">오픈소스</span></td>
+            <td class="note">Cloud $20/월~</td>
+          </tr>
+          <tr class="border-agent">
+            <td><div class="tool-name">Manus AI</div><div class="tool-maker">Monica</div></td>
+            <td>Monica (중국)</td>
+            <td class="note">2025년 등장한 완전 자율 AI 에이전트, 파일·웹·코드 처리</td>
+            <td><div class="feature-tags"><span class="ftag">완전자율</span><span class="ftag">에이전트</span><span class="ftag">멀티태스크</span></div></td>
+            <td><span class="badge badge-paid">유료</span></td>
+            <td class="note">2025 화제작</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 12. 회의·생산성 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon icon-meeting">📋</div>
+      <div>
+        <div class="section-title">⑫ 회의 보조 · 업무 생산성 AI</div>
+        <div class="section-desc">회의 녹취·요약, 일정 관리, 이메일 자동화</div>
+      </div>
+      <span class="section-count">6종</span>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>서비스명</th>
+            <th>개발사</th>
+            <th>핵심 특징</th>
+            <th>주요 기능 태그</th>
+            <th>요금제</th>
+            <th>비고</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="border-meeting">
+            <td><div class="tool-name">Otter.ai</div><div class="tool-maker">AISense</div></td>
+            <td>AISense (미국)</td>
+            <td class="note">Zoom·Teams·Meet 자동 녹취 요약, 액션 아이템 추출</td>
+            <td><div class="feature-tags"><span class="ftag">회의녹취</span><span class="ftag">요약</span><span class="ftag">액션아이템</span></div></td>
+            <td><span class="badge badge-freemium">프리미엄</span></td>
+            <td class="note">Pro $16.99/월~</td>
+          </tr>
+          <tr class="border-meeting">
+            <td><div class="tool-name">Fathom</div><div class="tool-maker">Fathom Video</div></td>
+            <td>Fathom Video (미국)</td>
+            <td class="note">무료 회의 요약 최강자, CRM 연동, 영업 특화</td>
+            <td><div class="feature-tags"><span class="ftag">회의요약</span><span class="ftag">CRM연동</span><span class="ftag">무료</span></div></td>
+            <td><span class="badge badge-freemium">프리미엄</span></td>
+            <td class="note">무료 플랜 강력</td>
+          </tr>
+          <tr class="border-meeting">
+            <td><div class="tool-name">Fireflies.ai</div><div class="tool-maker">Fireflies</div></td>
+            <td>Fireflies (미국)</td>
+            <td class="note">Super Summaries, 키워드 검색, 팀 공유 협업</td>
+            <td><div class="feature-tags"><span class="ftag">회의녹취</span><span class="ftag">요약</span><span class="ftag">협업</span></div></td>
+            <td><span class="badge badge-freemium">프리미엄</span></td>
+            <td class="note">Pro $10/유저/월~</td>
+          </tr>
+          <tr class="border-meeting">
+            <td><div class="tool-name">Reclaim AI</div><div class="tool-maker">Reclaim</div></td>
+            <td>Reclaim (미국)</td>
+            <td class="note">AI 일정 최적화, 집중 블록·회의 자동 스케줄링</td>
+            <td><div class="feature-tags"><span class="ftag">일정관리</span><span class="ftag">스케줄링</span><span class="ftag">생산성</span></div></td>
+            <td><span class="badge badge-freemium">프리미엄</span></td>
+            <td class="note">Starter $8/월~</td>
+          </tr>
+          <tr class="border-meeting">
+            <td><div class="tool-name">Motion</div><div class="tool-maker">Motion</div></td>
+            <td>Motion (미국)</td>
+            <td class="note">AI 자동 일정·할일 우선순위 조정, 생산성 매니저</td>
+            <td><div class="feature-tags"><span class="ftag">일정자동화</span><span class="ftag">할일관리</span><span class="ftag">AI우선순위</span></div></td>
+            <td><span class="badge badge-paid">유료</span></td>
+            <td class="note">$19/월~</td>
+          </tr>
+          <tr class="border-meeting">
+            <td><div class="tool-name">Superhuman</div><div class="tool-maker">Superhuman</div></td>
+            <td>Superhuman (미국)</td>
+            <td class="note">이메일 AI 자동 요약·초안 생성, 최속 이메일 클라이언트</td>
+            <td><div class="feature-tags"><span class="ftag">이메일AI</span><span class="ftag">요약</span><span class="ftag">초안생성</span></div></td>
+            <td><span class="badge badge-paid">유료</span></td>
+            <td class="note">$30/월~</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <footer>
+    <p>© 2026.03 기준 | 생성형 AI 서비스 총람 — 총 103종+ 수록</p>
+    <p style="margin-top:6px;color:#3a3a5a">요금·기능은 각 서비스 공식 사이트에서 최신 정보 확인 권장</p>
+  </footer>
+
+</div>
+</body>
+</html>

@@ -132,6 +132,18 @@
         border-color: rgba(56, 189, 248, 0.7);
       }
 
+      .badge a {
+        color: inherit;
+        text-decoration: none;
+        border-radius: 999px;
+        transition: color 0.2s ease, background 0.2s ease;
+      }
+
+      .badge a:hover {
+        color: #e0f2fe;
+        background: rgba(56, 189, 248, 0.18);
+      }
+
       .content {
         display: flex;
         flex-direction: column;
@@ -734,7 +746,7 @@
           <div class="shell-title">my_ai_lab • portfolio</div>
           <div class="badge-row">
             <div class="badge">AI boosted</div>
-            <div class="badge badge--primary">vibe coding in progress</div>
+            <div class="badge"><a href="https://favoritosmakers.github.io/ai-types.html" title="생성형 AI 종류와 특징" target="_blank" rel="noopener noreferrer">생성형 AI 종류와 특징('26.03.06 기준)</a></div>
           </div>
         </header>
 
@@ -785,7 +797,7 @@
           <div id="projects" class="projects-section">
             <header class="section-heading">
               <div class="section-title">Projects · Experiments</div>
-              <div class="section-counter">1개 완료 / 1개 진행중</div>
+              <div class="section-counter">2개 완료 / 1개 진행중</div>
             </header>
 
             <div class="projects-grid">
@@ -839,8 +851,49 @@
                   Android Studio, Gemini
                 </p>
               </article>
+            
+<!-- PROJECT 2 -->
+<article class="project-card">
+  <div class="project-title-row">
+    <h2 class="project-title">무료 QR 코드 생성기</h2>
+    <div class="project-chip-row">
+      <span class="chip">앱</span>
+      <span class="chip">안드로이드</span>
+    </div>
+  </div>
+  <div class="project-media-row">
+    <div class="project-avatar" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <!-- QR 코드 패턴 스타일 아이콘 -->
+        <rect x="3" y="3" width="5" height="5" rx="0.6" fill="rgba(224,242,254,0.95)" />
+        <rect x="5" y="5" width="1" height="1" fill="#0f172a" />
+        <rect x="16" y="3" width="5" height="5" rx="0.6" fill="rgba(56,189,248,0.9)" />
+        <rect x="18" y="5" width="1" height="1" fill="#0f172a" />
+        <rect x="3" y="16" width="5" height="5" rx="0.6" fill="rgba(168,85,247,0.9)" />
+        <rect x="5" y="18" width="1" height="1" fill="#0f172a" />
+        <rect x="10" y="10" width="1.2" height="1.2" fill="rgba(224,242,254,0.95)" />
+        <rect x="12.5" y="10" width="1.2" height="1.2" fill="rgba(224,242,254,0.95)" />
+        <rect x="10" y="12.5" width="1.2" height="1.2" fill="rgba(224,242,254,0.95)" />
+        <rect x="12.5" y="12.5" width="1.2" height="1.2" fill="rgba(224,242,254,0.95)" />
+        <rect x="15" y="10" width="1" height="4" fill="rgba(74,222,128,0.95)" />
+        <rect x="17" y="10" width="1" height="1" fill="rgba(74,222,128,0.95)" />
+        <rect x="17" y="13" width="1" height="1" fill="rgba(74,222,128,0.95)" />
+      </svg>
+    </div>
+    <a href="https://favoritosmakers.github.io/g-qr.apk" class="project-download">
+      다운로드(APK파일)
+      <span aria-hidden="true">↓</span>
+    </a>
+  </div>
+  <p class="project-desc">
+    텍스트, 인터넷 주소, 이메일 등을 입력하면 최대 5개까지 QR 코드를 만들 수 있습니다. 코드 가운데에 나만의 이미지를 넣을 수 있습니다.
+  </p>
+  <p class="project-desc">
+    Cursor, Android Studio, Gemini
+  </p>
+</article>
 
-              <!-- PROJECT 2 -->
+              <!-- PROJECT 3 -->
               <article class="project-card">
                 <div class="project-title-row">
                   <h2 class="project-title">블로그 글 자동 등록</h2>
