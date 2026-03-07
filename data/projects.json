@@ -37,5 +37,22 @@
     "fileUrl": "",
     "fileName": "제작중...",
     "imageUrl": ""
+  },
+  {
+    "id": "4",
+    "name": "카드 실적 관리 프로그램",
+    "description": "ㅇㄹㅇㄹㅇㄹ",
+    "tech": "Android Studio, Gemini, Grok, Android Studio, Gemini, Grok",
+    "features": [
+      "안드로이드",
+      "안드로이드",
+      "안드로이드",
+      "안드로이드"
+    ],
+    "fileUrl": "https://raw.githubusercontent.com/favoritosmakers/favoritosmakers.github.io/main/downloads/f_1772885436569______.jpg",
+    "fileName": "현재 지층.jpg",
+    "filePath": "downloads/f_1772885436569______.jpg",
+    "imageUrl": "https://raw.githubusercontent.com/favoritosmakers/favoritosmakers.github.io/main/images/img_1772885437313____2_.jpg",
+    "imagePath": "images/img_1772885437313____2_.jpg"
   }
 ]
