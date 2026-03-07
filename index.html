@@ -1127,7 +1127,7 @@
               document.getElementById("projectFeatures").value = (p.features && p.features.length) ? p.features.join(", ") : "";
               document.getElementById("projectTech").value = p.tech || "";
               document.getElementById("projectFileName").textContent = p.fileName ? "현재: " + p.fileName : "";
-              if (p.fileUrl) document.getElementById("projectFileUrl").value = p.fileUrl;
+              // 파일 URL 란은 수정 시 비워 둠 (업로드한 파일은 주소가 자동 생성되므로 링크란에 넣지 않음)
             }
           }
 
