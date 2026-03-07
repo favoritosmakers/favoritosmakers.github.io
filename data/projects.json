@@ -37,20 +37,5 @@
     "fileUrl": "",
     "fileName": "제작중...",
     "imageUrl": ""
-  },
-  {
-    "id": "4",
-    "name": "카드 실적 관리 프로그램",
-    "description": "이것은 아주 좋습니다.",
-    "tech": "Android Studio, Gemini, Grok",
-    "features": [
-      "앱",
-      "IOS"
-    ],
-    "fileUrl": "https://raw.githubusercontent.com/favoritosmakers/favoritosmakers.github.io/main/downloads/f_1772884561800___________.jpg",
-    "fileName": "포인트 창문(옥상).jpg",
-    "imageUrl": "https://raw.githubusercontent.com/favoritosmakers/favoritosmakers.github.io/main/images/img_1772884608492______.jpg",
-    "filePath": "downloads/f_1772884561800___________.jpg",
-    "imagePath": "images/img_1772884608492______.jpg"
   }
 ]
