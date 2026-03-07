@@ -1121,7 +1121,7 @@
           if (deleteRow) deleteRow.style.display = "none";
 
           if (id) {
-            var p = projects.find(function (x) { return x.id === id; });
+            var p = projects.find(function (x) { return x.id == id; });
             if (p) {
               document.getElementById("projectName").value = p.name || "";
               document.getElementById("projectDesc").value = p.description || "";
@@ -1151,7 +1151,7 @@
             fetch(url)
               .then(function (r) { return r.ok ? r.json() : Promise.reject(); })
               .then(function (decoded) {
-                if (Array.isArray(decoded)) projects = decoded;
+                if (Array.isArray(decoded)) projects = normalizeProjectIds(decoded);
                 else projects = defaultProjects.slice();
                 saveProjectsToStorage();
                 if (cb) cb();
@@ -1166,12 +1166,21 @@
           }
         }
 
+        function normalizeProjectIds(list) {
+          if (!Array.isArray(list)) return list;
+          return list.map(function (p) {
+            var id = p.id;
+            if (id != null && typeof id !== "string") p = Object.assign({}, p, { id: String(id) });
+            return p;
+          });
+        }
+
         function loadProjectsFromStorage() {
           try {
             var raw = localStorage.getItem(PROJECTS_STORAGE_KEY);
             if (raw) {
               var parsed = JSON.parse(raw);
-              if (Array.isArray(parsed) && parsed.length) return parsed;
+              if (Array.isArray(parsed) && parsed.length) return normalizeProjectIds(parsed);
             }
           } catch (e) {}
           return defaultProjects.slice();
@@ -1226,7 +1235,7 @@
             })
             .then(function (data) {
               if (data.ok && Array.isArray(data.projects)) {
-                projects = data.projects;
+                projects = normalizeProjectIds(data.projects);
                 saveProjectsToStorage();
               }
               if (cb) cb(data.ok ? null : (data.error || "오류"));
@@ -1355,10 +1364,10 @@
             btn.addEventListener("click", function () {
               if (!confirm("이 프로젝트를 삭제할까요?")) return;
               var id = btn.getAttribute("data-id");
-              var deleted = projects.find(function (p) { return p.id === id; });
+              var deleted = projects.find(function (p) { return p.id == id; });
               var filePath = deleted && (deleted.filePath || pathFromFileUrl(deleted.fileUrl));
               var imagePath = deleted && (deleted.imagePath || pathFromFileUrl(deleted.imageUrl));
-              projects = projects.filter(function (p) { return p.id !== id; });
+              projects = projects.filter(function (p) { return p.id != id; });
               saveProjectsToStorage();
               callUploadApi({
                 action: "delete",
@@ -1466,7 +1475,7 @@
           var existingFilePathToDelete = null;
           var project;
           if (editingId) {
-            project = projects.find(function (p) { return p.id === editingId; });
+            project = projects.find(function (p) { return p.id == editingId; });
             if (!project) project = { id: editingId };
             project.name = name;
             project.description = desc;
