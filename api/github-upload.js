@@ -1,7 +1,10 @@
 /**
  * 서버리스 API: GitHub에 프로젝트 데이터·파일 업로드
- * 환경 변수: GITHUB_TOKEN, GITHUB_OWNER, GITHUB_REPO, GITHUB_BRANCH(선택), GITHUB_DATA_PATH(선택), GITHUB_DOWNLOADS_PATH(선택), GITHUB_IMAGES_PATH(선택)
+ * 로그인 토큰 검증 후에만 처리 (비밀번호는 클라이언트에 없음)
+ * 환경 변수: GITHUB_TOKEN, GITHUB_OWNER, GITHUB_REPO, ADMIN_SECRET(토큰 검증용)
  */
+
+import crypto from "crypto";
 
 const branch = process.env.GITHUB_BRANCH || "main";
 const dataPath = process.env.GITHUB_DATA_PATH || "data/projects.json";
@@ -16,7 +19,28 @@ function getConfig() {
   return { token, owner, repo };
 }
 
-async function githubPut(path, content, isBase64) {
+/** 기존 파일 정보 조회 (수정 시 sha 필요) */
+async function githubGet(path) {
+  const c = getConfig();
+  if (!c) throw new Error("GitHub 설정이 없습니다.");
+  const res = await fetch(
+    `https://api.github.com/repos/${c.owner}/${c.repo}/contents/${path}?ref=${branch}`,
+    {
+      headers: {
+        Authorization: "Bearer " + c.token,
+        Accept: "application/vnd.github.v3+json",
+      },
+    }
+  );
+  if (res.status === 404) return null;
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.message || "GitHub API 오류");
+  }
+  return res.json();
+}
+
+async function githubPut(path, content, isBase64, existingSha = null) {
   const c = getConfig();
   if (!c) throw new Error("GitHub 설정이 없습니다.");
   const body = {
@@ -24,6 +48,7 @@ async function githubPut(path, content, isBase64) {
     branch,
     content: isBase64 ? content : Buffer.from(content, "utf8").toString("base64"),
   };
+  if (existingSha) body.sha = existingSha;
   const res = await fetch(
     `https://api.github.com/repos/${c.owner}/${c.repo}/contents/${path}?ref=${branch}`,
     {
@@ -50,12 +75,37 @@ function jsonResponse(obj, status = 200) {
   });
 }
 
+function verifyAuthToken(token, secret) {
+  if (!token || !secret) return false;
+  const parts = token.split(".");
+  if (parts.length !== 2) return false;
+  const [payloadB64, sig] = parts;
+  const expected = crypto.createHmac("sha256", secret).update(payloadB64).digest("hex");
+  if (expected !== sig) return false;
+  try {
+    const payload = JSON.parse(Buffer.from(payloadB64, "base64url").toString());
+    return payload.admin === true && payload.exp > Date.now();
+  } catch (e) {
+    return false;
+  }
+}
+
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization",
+};
+
 export async function POST(request) {
-  const corsHeaders = {
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods": "POST, OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type",
-  };
+  const secret = process.env.ADMIN_SECRET;
+  const authHeader = request.headers.get("Authorization") || "";
+  const token = authHeader.startsWith("Bearer ") ? authHeader.slice(7) : null;
+  if (!secret || !verifyAuthToken(token, secret)) {
+    return new Response(
+      JSON.stringify({ ok: false, error: "로그인이 필요합니다." }),
+      { status: 401, headers: { "Content-Type": "application/json", ...corsHeaders } }
+    );
+  }
 
   const config = getConfig();
   if (!config) {
@@ -135,7 +185,9 @@ export async function POST(request) {
     }
 
     const json = JSON.stringify(projects, null, 2);
-    await githubPut(dataPath, json, false);
+    const existing = await githubGet(dataPath);
+    const sha = existing && existing.sha ? existing.sha : null;
+    await githubPut(dataPath, json, false, sha);
 
     return new Response(JSON.stringify({ ok: true, projects }), {
       status: 200,

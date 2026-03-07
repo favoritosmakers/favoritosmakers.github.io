@@ -73,18 +73,22 @@ GitHub Pages를 쓰는 저장소라면 보통 `계정이름.github.io` 형태입
 
 **5단계: 변수 하나씩 추가**  
 - **Add New** 또는 **Add** 버튼(또는 **Key**, **Name** 입력란 옆에 있는 추가 버튼)을 클릭합니다.  
-- 다음 **세 개**를 각각 한 번에 하나씩 입력합니다.
+- 다음 변수들을 각각 한 번에 하나씩 입력합니다.
 
 | 입력할 곳 (Key / Name) | 입력할 값 (Value) |
 |------------------------|-------------------|
 | `GITHUB_TOKEN`         | GitHub에서 복사한 토큰 (`ghp_` 로 시작하는 긴 문자열) |
 | `GITHUB_OWNER`         | GitHub 계정 이름 (예: `favoritosmakers`) |
 | `GITHUB_REPO`          | 저장소 이름 (예: `favoritosmakers.github.io`) |
+| `ADMIN_PASSWORD`       | **관리자 로그인 비밀번호** (원하는 값으로 설정, 클라이언트에 노출되지 않음) |
+| `ADMIN_SECRET`         | **토큰 서명용 비밀키** (영문·숫자 조합 긴 문자열 권장, 예: `a1b2c3d4e5f6...` 32자 이상) |
 
 - **Key**(또는 Name) 란에는 위 표의 왼쪽 값을 **그대로** 입력합니다.  
   띄어쓰기 없이, 대소문자 구분해서 입력하세요.  
 - **Value**(또는 Value) 란에는 위 표의 오른쪽 값을 입력합니다.  
-  `GITHUB_TOKEN`은 GitHub 토큰 생성 페이지에서 **복사**한 값을 붙여넣습니다.
+  `GITHUB_TOKEN`은 GitHub 토큰 생성 페이지에서 **복사**한 값을 붙여넣습니다.  
+- **ADMIN_PASSWORD**: 이 사이트에서 "로그인"할 때 쓰는 비밀번호입니다. **Vercel 환경 변수에만** 넣으므로 소스 코드에 노출되지 않습니다.  
+- **ADMIN_SECRET**: 로그인 후 발급되는 토큰을 서명하는 데 씁니다. **ADMIN_PASSWORD와 다른 값**으로, 추측하기 어려운 긴 문자열로 설정하세요.
 
 **6단계: 적용 환경 선택**  
 - 같은 줄에 **Production**, **Preview**, **Development** 체크박스가 있으면  
@@ -102,8 +106,9 @@ GitHub Pages를 쓰는 저장소라면 보통 `계정이름.github.io` 형태입
 - **Redeploy**를 선택한 뒤 확인하면, 새 환경 변수가 적용된 상태로 다시 배포됩니다.
 
 **주의**  
-- **GITHUB_TOKEN** 값은 비밀번호처럼 다루세요. Vercel에만 입력하고, 채팅·이메일·스크린샷에는 넣지 마세요.  
-- Key 이름을 잘못 쓰면 동작하지 않습니다. `GITHUB_TOKEN`, `GITHUB_OWNER`, `GITHUB_REPO` 를 **정확히** 입력하세요.
+- **GITHUB_TOKEN**, **ADMIN_PASSWORD**, **ADMIN_SECRET** 값은 비밀번호처럼 다루세요. Vercel에만 입력하고, 채팅·이메일·스크린샷에는 넣지 마세요.  
+- Key 이름을 잘못 쓰면 동작하지 않습니다. 표에 적힌 변수명을 **정확히** 입력하세요.  
+- **관리자 비밀번호를 바꾸려면**: Vercel → 이 프로젝트 → Settings → Environment Variables 에서 `ADMIN_PASSWORD` 값을 수정한 뒤 저장하고, Deployments에서 **Redeploy** 하면 됩니다. (소스 코드에는 비밀번호가 없습니다.)
 
 ---
 

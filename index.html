@@ -1011,8 +1011,7 @@
     <script>
       (function () {
         // ---------- 설정 ----------
-        // 로그인 비밀번호 (배포 전 반드시 변경하세요)
-        var ADMIN_PASSWORD = "admin123";
+        // 비밀번호는 클라이언트에 없습니다. Vercel 환경 변수 ADMIN_PASSWORD, ADMIN_SECRET 에서 설정하세요.
         // GitHub 저장소 정보 (프로젝트 목록 로드용 공개 URL에 사용)
         var GITHUB_CONFIG = {
           owner: "favoritosmakers",
@@ -1023,7 +1022,7 @@
         // 서버리스 API 주소. 비우면 같은 도메인(/api/github-upload). Vercel 배포 시 같은 프로젝트면 "" 로 두면 됨.
         var API_BASE_URL = "";
 
-        var STORAGE_KEY = "my_ai_lab_logged_in";
+        var TOKEN_STORAGE_KEY = "my_ai_lab_token";
         var PROJECTS_STORAGE_KEY = "my_ai_lab_projects";
 
         // ---------- 기본 프로젝트 데이터 (GitHub data/projects.json 없을 때 사용) ----------
@@ -1063,13 +1062,17 @@
         var projects = [];
         var editingId = null;
 
-        function isLoggedIn() {
-          return sessionStorage.getItem(STORAGE_KEY) === "1";
+        function getAuthToken() {
+          return sessionStorage.getItem(TOKEN_STORAGE_KEY);
         }
 
-        function setLoggedIn(value) {
-          if (value) sessionStorage.setItem(STORAGE_KEY, "1");
-          else sessionStorage.removeItem(STORAGE_KEY);
+        function isLoggedIn() {
+          return !!getAuthToken();
+        }
+
+        function setAuthToken(token) {
+          if (token) sessionStorage.setItem(TOKEN_STORAGE_KEY, token);
+          else sessionStorage.removeItem(TOKEN_STORAGE_KEY);
           updateAuthUI();
         }
 
@@ -1187,12 +1190,19 @@
         function callUploadApi(payload, cb) {
           var base = (typeof API_BASE_URL === "string" && API_BASE_URL) ? API_BASE_URL : "";
           var url = base + "/api/github-upload";
+          var token = getAuthToken();
+          var headers = { "Content-Type": "application/json" };
+          if (token) headers["Authorization"] = "Bearer " + token;
           fetch(url, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: headers,
             body: JSON.stringify(payload)
           })
             .then(function (r) {
+              if (r.status === 401) {
+                setAuthToken(null);
+                return { ok: false, error: "로그인이 만료되었습니다. 다시 로그인해 주세요." };
+              }
               return r.text().then(function (text) {
                 if (r.status === 413 || (text && (text.indexOf("Payload") !== -1 || text.indexOf("Too Large") !== -1 || text.indexOf("Request Entity") !== -1))) {
                   return { ok: false, error: "파일이 너무 큽니다. Vercel 제한(약 4.5MB)을 초과한 것 같습니다. 파일을 4MB 이하로 줄이거나, 대표 이미지만 올려 주세요." };
@@ -1363,16 +1373,29 @@
         document.getElementById("loginCancel").addEventListener("click", closeLoginModal);
         document.getElementById("loginSubmit").addEventListener("click", function () {
           var pw = document.getElementById("loginPassword").value;
-          if (pw === ADMIN_PASSWORD) {
-            setLoggedIn(true);
-            closeLoginModal();
-          } else {
-            alert("비밀번호가 올바르지 않습니다.");
-          }
+          if (!pw) { alert("비밀번호를 입력해 주세요."); return; }
+          var base = (typeof API_BASE_URL === "string" && API_BASE_URL) ? API_BASE_URL : "";
+          fetch(base + "/api/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ password: pw })
+          })
+            .then(function (r) { return r.json(); })
+            .then(function (data) {
+              if (data.ok && data.token) {
+                setAuthToken(data.token);
+                closeLoginModal();
+              } else {
+                alert(data.error || "비밀번호가 올바르지 않습니다.");
+              }
+            })
+            .catch(function () {
+              alert("로그인 요청에 실패했습니다. 네트워크를 확인해 주세요.");
+            });
         });
 
         document.getElementById("btnLogout").addEventListener("click", function () {
-          setLoggedIn(false);
+          setAuthToken(null);
         });
 
         document.getElementById("btnAddProject").addEventListener("click", function () {
