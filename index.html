@@ -1299,9 +1299,16 @@
           grid.innerHTML = projects.map(function (p) {
             var features = Array.isArray(p.features) ? p.features : (p.features ? String(p.features).split(",").map(function (s) { return s.trim(); }).filter(Boolean) : []);
             var chips = features.map(function (f) { return '<span class="chip">' + escapeHtml(f) + '</span>'; }).join("");
+            var downloadLabel = (p.fileUrl && p.fileUrl !== "#")
+              ? (function () {
+                  var fn = p.fileName || "";
+                  var ext = fn.indexOf(".") >= 0 ? fn.slice(fn.lastIndexOf(".") + 1).toUpperCase() : "";
+                  return "다운로드(" + (ext || "파일") + "파일)";
+                })()
+              : "제작중...";
             var downloadHtml = (p.fileUrl && p.fileUrl !== "#")
-              ? '<a href="' + escapeHtml(p.fileUrl) + '" class="project-download" target="_blank" rel="noopener">' + escapeHtml(p.fileName || "다운로드") + ' <span aria-hidden="true">↓</span></a>'
-              : '<span class="project-download" style="cursor:default; opacity:0.9;">' + escapeHtml(p.fileName || "제작중...") + '</span>';
+              ? '<a href="' + escapeHtml(p.fileUrl) + '" class="project-download" target="_blank" rel="noopener">' + escapeHtml(downloadLabel) + ' <span aria-hidden="true">↓</span></a>'
+              : '<span class="project-download" style="cursor:default; opacity:0.9;">' + escapeHtml(downloadLabel) + '</span>';
             var avatarContent = p.imageUrl
               ? '<img src="' + escapeHtml(p.imageUrl) + '" alt="" style="width:100%;height:100%;object-fit:cover;" />'
               : '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4.5 8.5C4.5 7.12 5.62 6 7 6H17c1.38 0 2.5 1.12 2.5 2.5v7C19.5 16.88 18.38 18 17 18H7c-1.38 0-2.5-1.12-2.5-2.5v-7Z" stroke="rgba(224,242,254,0.95)" stroke-width="1.6"/><path d="M4.8 9.4h14.4" stroke="rgba(56,189,248,0.9)" stroke-width="2" stroke-linecap="round"/><path d="M7.4 14.2h4.9" stroke="rgba(168,85,247,0.95)" stroke-width="2" stroke-linecap="round"/><path d="M7.4 16.6h2.7" stroke="rgba(74,222,128,0.95)" stroke-width="2" stroke-linecap="round"/></svg>';

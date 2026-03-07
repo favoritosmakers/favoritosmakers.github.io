@@ -19,6 +19,15 @@ function getConfig() {
   return { token, owner, repo };
 }
 
+/** raw.githubusercontent.com URL에서 저장소 내 경로 추출 (기존 프로젝트 덮어쓰기용) */
+function pathFromFileUrl(fileUrl) {
+  if (!fileUrl || typeof fileUrl !== "string") return null;
+  const c = getConfig();
+  if (!c) return null;
+  const prefix = `https://raw.githubusercontent.com/${c.owner}/${c.repo}/${branch}/`;
+  return fileUrl.startsWith(prefix) ? fileUrl.slice(prefix.length) : null;
+}
+
 /** 기존 파일 정보 조회 (수정 시 sha 필요) */
 async function githubGet(path) {
   const c = getConfig();
@@ -66,6 +75,28 @@ async function githubPut(path, content, isBase64, existingSha = null) {
     throw new Error(err.message || "GitHub API 오류");
   }
   return res.json();
+}
+
+async function githubDelete(path, sha) {
+  const c = getConfig();
+  if (!c) throw new Error("GitHub 설정이 없습니다.");
+  const res = await fetch(
+    `https://api.github.com/repos/${c.owner}/${c.repo}/contents/${path}?ref=${branch}`,
+    {
+      method: "DELETE",
+      headers: {
+        Authorization: "Bearer " + c.token,
+        "Content-Type": "application/json",
+        Accept: "application/vnd.github.v3+json",
+      },
+      body: JSON.stringify({ message: "Delete " + path, sha }),
+    }
+  );
+  if (!res.ok && res.status !== 404) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.message || "GitHub API 오류");
+  }
+  return res.status === 204 || res.status === 200;
 }
 
 function jsonResponse(obj, status = 200) {
@@ -160,16 +191,48 @@ export async function POST(request) {
       const project = projects.find((p) => p.id === projectId);
       if (project) {
         if (fileBase64 && fileName) {
-          const fname =
-            "f_" + Date.now() + "_" + fileName.replace(/[^a-zA-Z0-9._-]/g, "_");
-          const path = downloadsPath + "/" + fname;
-          const result = await githubPut(path, fileBase64, true);
-          if (result.content && result.content.download_url) {
-            project.fileUrl = result.content.download_url;
-            project.fileName = fileName;
+          const oldPath = project.filePath || pathFromFileUrl(project.fileUrl) || null;
+          const isDifferentFile = oldPath && project.fileName && fileName !== project.fileName;
+          let path;
+          let result;
+          if (isDifferentFile) {
+            const existing = await githubGet(oldPath);
+            if (existing && existing.sha) await githubDelete(oldPath, existing.sha);
+            const fname =
+              "f_" + Date.now() + "_" + fileName.replace(/[^a-zA-Z0-9._-]/g, "_");
+            path = downloadsPath + "/" + fname;
+            result = await githubPut(path, fileBase64, true);
+            project.filePath = path;
+          } else if (oldPath) {
+            const existing = await githubGet(oldPath);
+            if (existing && existing.sha) {
+              result = await githubPut(oldPath, fileBase64, true, existing.sha);
+              path = oldPath;
+            } else {
+              const fname =
+                "f_" + Date.now() + "_" + fileName.replace(/[^a-zA-Z0-9._-]/g, "_");
+              path = downloadsPath + "/" + fname;
+              result = await githubPut(path, fileBase64, true);
+              project.filePath = path;
+            }
+          } else {
+            const fname =
+              "f_" + Date.now() + "_" + fileName.replace(/[^a-zA-Z0-9._-]/g, "_");
+            path = downloadsPath + "/" + fname;
+            result = await githubPut(path, fileBase64, true);
+            project.filePath = path;
           }
+          if (result && result.content && result.content.download_url) {
+            project.fileUrl = result.content.download_url;
+          }
+          project.fileName = fileName;
         }
         if (imageBase64 && imageFileName) {
+          const oldPath = project.imagePath || pathFromFileUrl(project.imageUrl) || null;
+          if (oldPath) {
+            const existing = await githubGet(oldPath);
+            if (existing && existing.sha) await githubDelete(oldPath, existing.sha);
+          }
           const iname =
             "img_" +
             Date.now() +
@@ -177,7 +240,8 @@ export async function POST(request) {
             (imageFileName.replace(/[^a-zA-Z0-9._-]/g, "_") || "image.png");
           const path = imagesPath + "/" + iname;
           const result = await githubPut(path, imageBase64, true);
-          if (result.content && result.content.download_url) {
+          project.imagePath = path;
+          if (result && result.content && result.content.download_url) {
             project.imageUrl = result.content.download_url;
           }
         }
