@@ -188,7 +188,10 @@ export async function POST(request) {
     );
   }
 
-  const projects = [...projectsList];
+  const projects = projectsList.map((p) => ({
+    ...p,
+    id: p.id != null ? String(p.id) : p.id,
+  }));
 
   try {
     if (action === "delete" && deletedProject) {
@@ -208,7 +211,7 @@ export async function POST(request) {
     }
 
     if (action === "save" && projectId != null) {
-      const project = projects.find((p) => p.id === projectId);
+      const project = projects.find((p) => p.id == projectId);
       if (project) {
         if (bodyFileUrl && !fileBase64) {
           project.fileUrl = bodyFileUrl;
