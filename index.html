@@ -698,6 +698,117 @@
         color: #e0f2fe;
       }
 
+      /* 로그인 / 관리 버튼 */
+      .auth-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .btn-login, .btn-logout, .btn-add-project {
+        padding: 6px 12px;
+        border-radius: 999px;
+        font-size: 0.75rem;
+        cursor: pointer;
+        border: 1px solid rgba(148, 163, 184, 0.5);
+        background: rgba(15, 23, 42, 0.9);
+        color: var(--muted);
+        text-decoration: none;
+        transition: background 0.16s ease-out, border-color 0.16s ease-out, color 0.16s ease-out;
+      }
+      .btn-login:hover, .btn-add-project:hover {
+        border-color: rgba(56, 189, 248, 0.8);
+        color: #e0f2fe;
+      }
+      .btn-logout:hover {
+        border-color: rgba(248, 113, 113, 0.6);
+        color: #fca5a5;
+      }
+      .btn-edit-card, .btn-delete-card {
+        padding: 4px 8px;
+        border-radius: 999px;
+        font-size: 0.7rem;
+        cursor: pointer;
+        border: 1px solid rgba(148, 163, 184, 0.5);
+        background: rgba(15, 23, 42, 0.9);
+        color: var(--muted);
+        margin-left: 4px;
+        transition: background 0.16s ease-out, border-color 0.16s ease-out, color 0.16s ease-out;
+      }
+      .btn-edit-card:hover { border-color: rgba(56, 189, 248, 0.8); color: #e0f2fe; }
+      .btn-delete-card:hover { border-color: rgba(248, 113, 113, 0.8); color: #fca5a5; }
+
+      /* 모달 */
+      .modal-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(5, 8, 22, 0.85);
+        backdrop-filter: blur(8px);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+      .modal-overlay.is-open {
+        display: flex;
+      }
+      .modal-box {
+        width: 100%;
+        max-width: 480px;
+        max-height: 90vh;
+        overflow-y: auto;
+        border-radius: var(--radius-lg);
+        border: 1px solid var(--border);
+        background: linear-gradient(135deg, rgba(15, 23, 42, 0.98), rgba(15, 23, 42, 0.95));
+        box-shadow: var(--shadow-soft);
+        padding: 24px;
+      }
+      .modal-title {
+        font-size: 1rem;
+        margin: 0 0 16px;
+        color: var(--text);
+      }
+      .form-group {
+        margin-bottom: 14px;
+      }
+      .form-group label {
+        display: block;
+        font-size: 0.78rem;
+        color: var(--muted);
+        margin-bottom: 4px;
+      }
+      .form-group input[type="text"],
+      .form-group input[type="password"],
+      .form-group textarea {
+        width: 100%;
+        padding: 8px 12px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: rgba(15, 23, 42, 0.9);
+        color: var(--text);
+        font-size: 0.86rem;
+      }
+      .form-group textarea {
+        min-height: 60px;
+        resize: vertical;
+      }
+      .form-group input::file-selector-button {
+        padding: 6px 10px;
+        border-radius: 6px;
+        border: 1px solid var(--border);
+        background: rgba(15, 23, 42, 0.9);
+        color: var(--muted);
+        font-size: 0.78rem;
+        cursor: pointer;
+        margin-right: 8px;
+      }
+      .form-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+      }
+      .form-actions .btn { flex: 1; }
+
       @media (max-width: 640px) {
         main {
           padding: 18px 12px 32px;
@@ -744,9 +855,16 @@
             <span class="dot green"></span>
           </div>
           <div class="shell-title">my_ai_lab • portfolio</div>
-          <div class="badge-row">
+          <div class="badge-row auth-row">
             <div class="badge">참고자료</div>
             <div class="badge"><a href="https://favoritosmakers.github.io/ai-types.html" title="생성형 AI 종류와 특징" target="_blank" rel="noopener noreferrer">생성형 AI 종류와 특징('26.03.06 기준)</a></div>
+            <span id="authArea">
+              <button type="button" class="btn-login" id="btnLogin">로그인</button>
+            </span>
+            <span id="adminArea" style="display:none;">
+              <button type="button" class="btn-add-project" id="btnAddProject">프로젝트 추가</button>
+              <button type="button" class="btn-logout" id="btnLogout">로그아웃</button>
+            </span>
           </div>
         </header>
 
@@ -776,7 +894,7 @@
               <div class="hero-meta" aria-label="현재 포지션 및 관심사">
                 <div class="hero-meta-item">
                   <span class="hero-meta-dot"></span>
-                  <span class="hero-meta-label">Hi guys, I am</span>
+                  <span class="hero-meta-label">Profile</span>
                   <span
                     >· 재테크와 카운티캠핑카에 관심 많음, 아내와 말 안듣는 고딩 딸 둘, 반려견 시츄
                     두마리와 함께 살고 있습니다.</span
@@ -793,174 +911,13 @@
             </div>
           </div>
 
-          <!-- PROJECT LIST (CENTERED UNDER INTRO) -->
+          <!-- PROJECT LIST (동적 렌더링) -->
           <div id="projects" class="projects-section">
             <header class="section-heading">
               <div class="section-title">Projects · Experiments</div>
-              <div class="section-counter">2개 완료 / 1개 진행중</div>
+              <div class="section-counter" id="projectCounter">0개</div>
             </header>
-
-            <div class="projects-grid">
-              <!-- PROJECT 1 -->
-              <article class="project-card">
-                <div class="project-title-row">
-                  <h2 class="project-title">카드 실적 관리 프로그램</h2>
-                  <div class="project-chip-row">
-                    <span class="chip">앱</span>
-                    <span class="chip">안드로이드</span>
-                  </div>
-                </div>
-                <div class="project-media-row">
-                  <div class="project-avatar" aria-hidden="true">
-                    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                      <path
-                        d="M4.5 8.5C4.5 7.12 5.62 6 7 6H17c1.38 0 2.5 1.12 2.5 2.5v7C19.5 16.88 18.38 18 17 18H7c-1.38 0-2.5-1.12-2.5-2.5v-7Z"
-                        stroke="rgba(224,242,254,0.95)"
-                        stroke-width="1.6"
-                      />
-                      <path
-                        d="M4.8 9.4h14.4"
-                        stroke="rgba(56,189,248,0.9)"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                      />
-                      <path
-                        d="M7.4 14.2h4.9"
-                        stroke="rgba(168,85,247,0.95)"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                      />
-                      <path
-                        d="M7.4 16.6h2.7"
-                        stroke="rgba(74,222,128,0.95)"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                      />
-                    </svg>
-                  </div>
-                  <a href="https://favoritosmakers.github.io/card.apk" class="project-download">
-                    다운로드 (APK파일)
-                    <span aria-hidden="true">↓</span>
-                  </a>
-                </div>
-                <p class="project-desc">
-                  카드별 실적 조건을 한눈에 보고, 다음 달 혜택을 받기 위해서 필요한 실적을
-                  자동으로 보여줍니다.
-                </p>
-                <p class="project-desc">
-                  Android Studio, Gemini
-                </p>
-              </article>
-            
-<!-- PROJECT 2 -->
-<article class="project-card">
-  <div class="project-title-row">
-    <h2 class="project-title">무료 QR 코드 생성기</h2>
-    <div class="project-chip-row">
-      <span class="chip">앱</span>
-      <span class="chip">안드로이드</span>
-    </div>
-  </div>
-  <div class="project-media-row">
-    <div class="project-avatar" aria-hidden="true">
-      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-        <!-- QR 코드 패턴 스타일 아이콘 -->
-        <rect x="3" y="3" width="5" height="5" rx="0.6" fill="rgba(224,242,254,0.95)" />
-        <rect x="5" y="5" width="1" height="1" fill="#0f172a" />
-        <rect x="16" y="3" width="5" height="5" rx="0.6" fill="rgba(56,189,248,0.9)" />
-        <rect x="18" y="5" width="1" height="1" fill="#0f172a" />
-        <rect x="3" y="16" width="5" height="5" rx="0.6" fill="rgba(168,85,247,0.9)" />
-        <rect x="5" y="18" width="1" height="1" fill="#0f172a" />
-        <rect x="10" y="10" width="1.2" height="1.2" fill="rgba(224,242,254,0.95)" />
-        <rect x="12.5" y="10" width="1.2" height="1.2" fill="rgba(224,242,254,0.95)" />
-        <rect x="10" y="12.5" width="1.2" height="1.2" fill="rgba(224,242,254,0.95)" />
-        <rect x="12.5" y="12.5" width="1.2" height="1.2" fill="rgba(224,242,254,0.95)" />
-        <rect x="15" y="10" width="1" height="4" fill="rgba(74,222,128,0.95)" />
-        <rect x="17" y="10" width="1" height="1" fill="rgba(74,222,128,0.95)" />
-        <rect x="17" y="13" width="1" height="1" fill="rgba(74,222,128,0.95)" />
-      </svg>
-    </div>
-    <a href="https://favoritosmakers.github.io/g-QR.apk" class="project-download">
-      다운로드(APK파일)
-      <span aria-hidden="true">↓</span>
-    </a>
-  </div>
-  <p class="project-desc">
-    텍스트, 인터넷 주소, 이메일 등을 입력하면 최대 5개까지 QR 코드를 만들 수 있습니다. 코드 가운데에 나만의 이미지를 넣을 수 있습니다.
-  </p>
-  <p class="project-desc">
-    Cursor, Android Studio, Gemini
-  </p>
-</article>
-
-              <!-- PROJECT 3 -->
-              <article class="project-card">
-                <div class="project-title-row">
-                  <h2 class="project-title">블로그 글 자동 등록</h2>
-                  <div class="project-chip-row">
-                    <span class="chip">앱</span>
-                    <span class="chip">안드로이드</span>
-                  </div>
-                </div>
-                <div class="project-media-row">
-                  <div class="project-avatar" aria-hidden="true">
-                    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                      <!-- 경제/투자 느낌의 차트 + 화살표 아이콘 -->
-                      <path
-                        d="M4 18.5h16"
-                        stroke="rgba(148,163,184,0.9)"
-                        stroke-width="1.4"
-                        stroke-linecap="round"
-                      />
-                      <path
-                        d="M6.2 16V11.5"
-                        stroke="rgba(56,189,248,0.95)"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                      />
-                      <path
-                        d="M11 16V9.2"
-                        stroke="rgba(59,130,246,0.95)"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                      />
-                      <path
-                        d="M15.8 16v-4.6"
-                        stroke="rgba(16,185,129,0.95)"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                      />
-                      <path
-                        d="M8 8.5 11.3 6l3.4 2.2 3.3-3.2"
-                        stroke="rgba(250,204,21,0.95)"
-                        stroke-width="1.6"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                      <path
-                        d="M17.7 5h1.9v2"
-                        stroke="rgba(250,204,21,0.95)"
-                        stroke-width="1.6"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                    </svg>
-                  </div>
-                  <a href="#" class="project-download">
-                    제작중...
-                    <span aria-hidden="true">↓</span>
-                  </a>
-                </div>
-                <p class="project-desc">
-                  매일 아침, 미국 시황 분석을 요약하고 사람들이 좋아할 만한 ETF 한 종목에 대한 분석 보고서를 작성한 후 블로그에 자동으로 등록합니다.
-                </p>
-                <p class="project-desc">
-                  (maybe) Python, Gemini, Wordpress...
-                </p>
-              </article>
-
-    
-            </div>
+            <div class="projects-grid" id="projectsGrid"></div>
           </div>
 
           <div class="timeline" aria-label="코딩 타임라인"></div>
@@ -997,23 +954,495 @@
       </section>
     </main>
 
+    <!-- 로그인 모달 -->
+    <div class="modal-overlay" id="loginModal" aria-hidden="true">
+      <div class="modal-box">
+        <h2 class="modal-title">로그인</h2>
+        <div class="form-group">
+          <label for="loginPassword">비밀번호</label>
+          <input type="password" id="loginPassword" placeholder="비밀번호 입력" autocomplete="current-password" />
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn btn-primary" id="loginSubmit">로그인</button>
+          <button type="button" class="btn btn-ghost" id="loginCancel">취소</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 프로젝트 등록/수정 모달 -->
+    <div class="modal-overlay" id="projectModal" aria-hidden="true">
+      <div class="modal-box">
+        <h2 class="modal-title" id="projectModalTitle">프로젝트 등록</h2>
+        <input type="hidden" id="projectId" />
+        <div class="form-group">
+          <label for="projectName">프로젝트 이름</label>
+          <input type="text" id="projectName" placeholder="예: 카드 실적 관리 프로그램" />
+        </div>
+        <div class="form-group">
+          <label for="projectDesc">설명</label>
+          <textarea id="projectDesc" placeholder="프로젝트 설명을 입력하세요."></textarea>
+        </div>
+        <div class="form-group">
+          <label for="projectFeatures">특징 (쉼표로 구분)</label>
+          <input type="text" id="projectFeatures" placeholder="예: 앱, 안드로이드" />
+        </div>
+        <div class="form-group">
+          <label for="projectTech">기술/도구 요약 (선택)</label>
+          <input type="text" id="projectTech" placeholder="예: Android Studio, Gemini" />
+        </div>
+        <div class="form-group">
+          <label for="projectFile">파일 업로드 (APK 등)</label>
+          <input type="file" id="projectFile" accept=".apk,.zip,.pdf,.jar" />
+          <span id="projectFileName" class="hint"></span>
+        </div>
+        <div class="form-group">
+          <label for="projectImage">대표 이미지</label>
+          <input type="file" id="projectImage" accept="image/*" />
+          <span id="projectImageName" class="hint"></span>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn btn-primary" id="projectSave">저장</button>
+          <button type="button" class="btn btn-ghost" id="projectCancel">취소</button>
+        </div>
+      </div>
+    </div>
+
     <script>
+      (function () {
+        // ---------- 설정 ----------
+        // 로그인 비밀번호 (배포 전 반드시 변경하세요)
+        var ADMIN_PASSWORD = "admin123";
+        // GitHub 저장소 정보 (프로젝트 목록 로드용 공개 URL에 사용)
+        var GITHUB_CONFIG = {
+          owner: "favoritosmakers",
+          repo: "favoritosmakers.github.io",
+          branch: "main",
+          dataPath: "data/projects.json"
+        };
+        // 서버리스 API 주소. 비우면 같은 도메인(/api/github-upload). Vercel 배포 시 같은 프로젝트면 "" 로 두면 됨.
+        var API_BASE_URL = "";
+
+        var STORAGE_KEY = "my_ai_lab_logged_in";
+        var PROJECTS_STORAGE_KEY = "my_ai_lab_projects";
+
+        // ---------- 기본 프로젝트 데이터 (GitHub data/projects.json 없을 때 사용) ----------
+        var defaultProjects = [
+          {
+            id: "1",
+            name: "카드 실적 관리 프로그램",
+            description: "카드별 실적 조건을 한눈에 보고, 다음 달 혜택을 받기 위해서 필요한 실적을 자동으로 보여줍니다.",
+            tech: "Android Studio, Gemini",
+            features: ["앱", "안드로이드"],
+            fileUrl: "https://favoritosmakers.github.io/card.apk",
+            fileName: "다운로드 (APK파일)",
+            imageUrl: ""
+          },
+          {
+            id: "2",
+            name: "무료 QR 코드 생성기",
+            description: "텍스트, 인터넷 주소, 이메일 등을 입력하면 최대 5개까지 QR 코드를 만들 수 있습니다. 코드 가운데에 나만의 이미지를 넣을 수 있습니다.",
+            tech: "Cursor, Android Studio, Gemini",
+            features: ["앱", "안드로이드"],
+            fileUrl: "https://favoritosmakers.github.io/g-QR.apk",
+            fileName: "다운로드(APK파일)",
+            imageUrl: ""
+          },
+          {
+            id: "3",
+            name: "블로그 글 자동 등록",
+            description: "매일 아침, 미국 시황 분석을 요약하고 사람들이 좋아할 만한 ETF 한 종목에 대한 분석 보고서를 작성한 후 블로그에 자동으로 등록합니다.",
+            tech: "(maybe) Python, Gemini, Wordpress...",
+            features: ["앱", "안드로이드"],
+            fileUrl: "",
+            fileName: "제작중...",
+            imageUrl: ""
+          }
+        ];
+
+        var projects = [];
+        var editingId = null;
+
+        function isLoggedIn() {
+          return sessionStorage.getItem(STORAGE_KEY) === "1";
+        }
+
+        function setLoggedIn(value) {
+          if (value) sessionStorage.setItem(STORAGE_KEY, "1");
+          else sessionStorage.removeItem(STORAGE_KEY);
+          updateAuthUI();
+        }
+
+        function updateAuthUI() {
+          var authArea = document.getElementById("authArea");
+          var adminArea = document.getElementById("adminArea");
+          if (!authArea || !adminArea) return;
+          if (isLoggedIn()) {
+            authArea.style.display = "none";
+            adminArea.style.display = "inline";
+          } else {
+            authArea.style.display = "inline";
+            adminArea.style.display = "none";
+          }
+        }
+
+        function openLoginModal() {
+          document.getElementById("loginPassword").value = "";
+          document.getElementById("loginModal").classList.add("is-open");
+          document.getElementById("loginModal").setAttribute("aria-hidden", "false");
+        }
+
+        function closeLoginModal() {
+          document.getElementById("loginModal").classList.remove("is-open");
+          document.getElementById("loginModal").setAttribute("aria-hidden", "true");
+        }
+
+        function openProjectModal(id) {
+          editingId = id || null;
+          document.getElementById("projectModalTitle").textContent = id ? "프로젝트 수정" : "프로젝트 등록";
+          document.getElementById("projectId").value = id || "";
+          document.getElementById("projectName").value = "";
+          document.getElementById("projectDesc").value = "";
+          document.getElementById("projectFeatures").value = "";
+          document.getElementById("projectTech").value = "";
+          document.getElementById("projectFile").value = "";
+          document.getElementById("projectImage").value = "";
+          document.getElementById("projectFileName").textContent = "";
+          document.getElementById("projectImageName").textContent = "";
+
+          if (id) {
+            var p = projects.find(function (x) { return x.id === id; });
+            if (p) {
+              document.getElementById("projectName").value = p.name || "";
+              document.getElementById("projectDesc").value = p.description || "";
+              document.getElementById("projectFeatures").value = (p.features && p.features.length) ? p.features.join(", ") : "";
+              document.getElementById("projectTech").value = p.tech || "";
+              document.getElementById("projectFileName").textContent = p.fileName ? "현재: " + p.fileName : "";
+            }
+          }
+
+          document.getElementById("projectModal").classList.add("is-open");
+          document.getElementById("projectModal").setAttribute("aria-hidden", "false");
+        }
+
+        function closeProjectModal() {
+          document.getElementById("projectModal").classList.remove("is-open");
+          document.getElementById("projectModal").setAttribute("aria-hidden", "true");
+          editingId = null;
+        }
+
+        function loadProjects(cb) {
+          if (GITHUB_CONFIG.owner && GITHUB_CONFIG.repo) {
+            var branch = GITHUB_CONFIG.branch || "main";
+            var url = "https://raw.githubusercontent.com/" + GITHUB_CONFIG.owner + "/" + GITHUB_CONFIG.repo + "/" + branch + "/" + GITHUB_CONFIG.dataPath;
+            fetch(url)
+              .then(function (r) { return r.ok ? r.json() : Promise.reject(); })
+              .then(function (decoded) {
+                if (Array.isArray(decoded)) projects = decoded;
+                else projects = defaultProjects.slice();
+                saveProjectsToStorage();
+                if (cb) cb();
+              })
+              .catch(function () {
+                projects = loadProjectsFromStorage();
+                if (cb) cb();
+              });
+          } else {
+            projects = loadProjectsFromStorage();
+            if (cb) cb();
+          }
+        }
+
+        function loadProjectsFromStorage() {
+          try {
+            var raw = localStorage.getItem(PROJECTS_STORAGE_KEY);
+            if (raw) {
+              var parsed = JSON.parse(raw);
+              if (Array.isArray(parsed) && parsed.length) return parsed;
+            }
+          } catch (e) {}
+          return defaultProjects.slice();
+        }
+
+        function saveProjectsToStorage() {
+          try {
+            localStorage.setItem(PROJECTS_STORAGE_KEY, JSON.stringify(projects));
+          } catch (e) {}
+        }
+
+        function fileToBase64(file) {
+          return new Promise(function (resolve, reject) {
+            var reader = new FileReader();
+            reader.onload = function () {
+              var b64 = reader.result.split(",")[1];
+              resolve(b64);
+            };
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+          });
+        }
+
+        function callUploadApi(payload, cb) {
+          var base = (typeof API_BASE_URL === "string" && API_BASE_URL) ? API_BASE_URL : "";
+          var url = base + "/api/github-upload";
+          fetch(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+          })
+            .then(function (r) { return r.json(); })
+            .then(function (data) {
+              if (data.ok && Array.isArray(data.projects)) {
+                projects = data.projects;
+                saveProjectsToStorage();
+              }
+              if (cb) cb(data.ok ? null : (data.error || "오류"));
+            })
+            .catch(function (err) {
+              if (cb) cb(err && err.message ? err.message : "네트워크 오류");
+            });
+        }
+
+        function saveProjectToGitHub(project, fileFile, imageFile, cb) {
+          var fileB64 = null;
+          var imageB64 = null;
+          var fileName = null;
+          var imageFileName = null;
+
+          function doUpload() {
+            var payload = {
+              action: "save",
+              projects: projects,
+              projectId: project.id
+            };
+            if (fileB64) {
+              payload.fileBase64 = fileB64;
+              payload.fileName = fileName;
+            }
+            if (imageB64) {
+              payload.imageBase64 = imageB64;
+              payload.imageFileName = imageFileName;
+            }
+            callUploadApi(payload, function (err) {
+              if (err) alert("업로드 실패: " + err);
+              renderProjects();
+              if (cb) cb();
+            });
+          }
+
+          if (fileFile && fileFile.size) {
+            fileToBase64(fileFile).then(function (b64) {
+              fileB64 = b64;
+              fileName = fileFile.name || "file";
+              if (imageFile && imageFile.size) {
+                return fileToBase64(imageFile).then(function (ib) {
+                  imageB64 = ib;
+                  imageFileName = imageFile.name || "image.png";
+                });
+              }
+            }).then(doUpload).catch(function () {
+              alert("파일 읽기 실패");
+              if (cb) cb();
+            });
+          } else if (imageFile && imageFile.size) {
+            fileToBase64(imageFile).then(function (b64) {
+              imageB64 = b64;
+              imageFileName = imageFile.name || "image.png";
+              doUpload();
+            }).catch(function () {
+              alert("이미지 읽기 실패");
+              if (cb) cb();
+            });
+          } else {
+            doUpload();
+          }
+        }
+
+        function renderProjects() {
+          var grid = document.getElementById("projectsGrid");
+          var counter = document.getElementById("projectCounter");
+          if (!grid) return;
+
+          var completed = projects.filter(function (p) { return p.fileUrl && p.fileUrl !== "#"; }).length;
+          var total = projects.length;
+          if (counter) counter.textContent = total + "개 (완료 " + completed + " / 진행중 " + (total - completed) + ")";
+
+          grid.innerHTML = projects.map(function (p) {
+            var features = Array.isArray(p.features) ? p.features : (p.features ? String(p.features).split(",").map(function (s) { return s.trim(); }).filter(Boolean) : []);
+            var chips = features.map(function (f) { return '<span class="chip">' + escapeHtml(f) + '</span>'; }).join("");
+            var downloadHtml = (p.fileUrl && p.fileUrl !== "#")
+              ? '<a href="' + escapeHtml(p.fileUrl) + '" class="project-download" target="_blank" rel="noopener">' + escapeHtml(p.fileName || "다운로드") + ' <span aria-hidden="true">↓</span></a>'
+              : '<span class="project-download" style="cursor:default; opacity:0.9;">' + escapeHtml(p.fileName || "제작중...") + '</span>';
+            var avatarContent = p.imageUrl
+              ? '<img src="' + escapeHtml(p.imageUrl) + '" alt="" style="width:100%;height:100%;object-fit:cover;" />'
+              : '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4.5 8.5C4.5 7.12 5.62 6 7 6H17c1.38 0 2.5 1.12 2.5 2.5v7C19.5 16.88 18.38 18 17 18H7c-1.38 0-2.5-1.12-2.5-2.5v-7Z" stroke="rgba(224,242,254,0.95)" stroke-width="1.6"/><path d="M4.8 9.4h14.4" stroke="rgba(56,189,248,0.9)" stroke-width="2" stroke-linecap="round"/><path d="M7.4 14.2h4.9" stroke="rgba(168,85,247,0.95)" stroke-width="2" stroke-linecap="round"/><path d="M7.4 16.6h2.7" stroke="rgba(74,222,128,0.95)" stroke-width="2" stroke-linecap="round"/></svg>';
+            var adminBtns = isLoggedIn()
+              ? '<div class="project-chip-row" style="margin-top:4px;"><button type="button" class="btn-edit-card" data-id="' + escapeHtml(p.id) + '">수정</button><button type="button" class="btn-delete-card" data-id="' + escapeHtml(p.id) + '">삭제</button></div>'
+              : "";
+
+            return (
+              '<article class="project-card" data-id="' + escapeHtml(p.id) + '">' +
+                '<div class="project-title-row">' +
+                  '<h2 class="project-title">' + escapeHtml(p.name || "") + '</h2>' +
+                  '<div class="project-chip-row">' + chips + '</div>' +
+                '</div>' +
+                '<div class="project-media-row">' +
+                  '<div class="project-avatar" aria-hidden="true">' + avatarContent + '</div>' +
+                  downloadHtml +
+                '</div>' +
+                '<p class="project-desc">' + escapeHtml(p.description || "") + '</p>' +
+                (p.tech ? '<p class="project-desc">' + escapeHtml(p.tech) + '</p>' : "") +
+                adminBtns +
+              '</article>'
+            );
+          }).join("");
+
+          grid.querySelectorAll(".btn-edit-card").forEach(function (btn) {
+            btn.addEventListener("click", function () { openProjectModal(btn.getAttribute("data-id")); });
+          });
+          grid.querySelectorAll(".btn-delete-card").forEach(function (btn) {
+            btn.addEventListener("click", function () {
+              if (!confirm("이 프로젝트를 삭제할까요?")) return;
+              var id = btn.getAttribute("data-id");
+              projects = projects.filter(function (p) { return p.id !== id; });
+              saveProjectsToStorage();
+              callUploadApi({ action: "delete", projects: projects }, function (err) {
+                if (err) alert("삭제 반영 실패: " + err);
+                renderProjects();
+              });
+              renderProjects();
+            });
+          });
+        }
+
+        function escapeHtml(s) {
+          if (s == null) return "";
+          var div = document.createElement("div");
+          div.textContent = s;
+          return div.innerHTML;
+        }
+
+        function nextId() {
+          var max = 0;
+          projects.forEach(function (p) {
+            var n = parseInt(p.id, 10);
+            if (!isNaN(n) && n > max) max = n;
+          });
+          return String(max + 1);
+        }
+
+        document.getElementById("projectFile").addEventListener("change", function () {
+          var fn = this.files[0] ? this.files[0].name : "";
+          document.getElementById("projectFileName").textContent = fn ? "선택: " + fn : "";
+        });
+        document.getElementById("projectImage").addEventListener("change", function () {
+          var fn = this.files[0] ? this.files[0].name : "";
+          document.getElementById("projectImageName").textContent = fn ? "선택: " + fn : "";
+        });
+
+        document.getElementById("btnLogin").addEventListener("click", openLoginModal);
+        document.getElementById("loginCancel").addEventListener("click", closeLoginModal);
+        document.getElementById("loginSubmit").addEventListener("click", function () {
+          var pw = document.getElementById("loginPassword").value;
+          if (pw === ADMIN_PASSWORD) {
+            setLoggedIn(true);
+            closeLoginModal();
+          } else {
+            alert("비밀번호가 올바르지 않습니다.");
+          }
+        });
+
+        document.getElementById("btnLogout").addEventListener("click", function () {
+          setLoggedIn(false);
+        });
+
+        document.getElementById("btnAddProject").addEventListener("click", function () {
+          openProjectModal(null);
+        });
+
+        document.getElementById("projectCancel").addEventListener("click", closeProjectModal);
+        document.getElementById("projectSave").addEventListener("click", function () {
+          var id = document.getElementById("projectId").value;
+          var name = document.getElementById("projectName").value.trim();
+          var desc = document.getElementById("projectDesc").value.trim();
+          var featuresStr = document.getElementById("projectFeatures").value.trim();
+          var tech = document.getElementById("projectTech").value.trim();
+          var fileInput = document.getElementById("projectFile");
+          var imageInput = document.getElementById("projectImage");
+          var fileFile = fileInput.files[0];
+          var imageFile = imageInput.files[0];
+
+          if (!name) {
+            alert("프로젝트 이름을 입력해 주세요.");
+            return;
+          }
+
+          var features = featuresStr ? featuresStr.split(",").map(function (s) { return s.trim(); }).filter(Boolean) : [];
+
+          var project;
+          if (editingId) {
+            project = projects.find(function (p) { return p.id === editingId; });
+            if (!project) project = { id: editingId };
+            project.name = name;
+            project.description = desc;
+            project.tech = tech;
+            project.features = features;
+            project.fileName = project.fileName || (fileFile ? fileFile.name : "제작중...");
+            if (!project.fileUrl && fileFile) project.fileUrl = "";
+          } else {
+            project = {
+              id: nextId(),
+              name: name,
+              description: desc,
+              tech: tech,
+              features: features,
+              fileUrl: fileFile ? "" : "",
+              fileName: fileFile ? (fileFile.name || "다운로드") : "제작중...",
+              imageUrl: ""
+            };
+            projects.push(project);
+          }
+
+          closeProjectModal();
+
+          saveProjectsToStorage();
+          if (fileFile || imageFile) {
+            saveProjectToGitHub(project, fileFile, imageFile, function () {
+              renderProjects();
+            });
+          } else {
+            callUploadApi(
+              { action: "save", projects: projects, projectId: project.id },
+              function (err) {
+                if (err) alert("저장 실패: " + err);
+                renderProjects();
+              }
+            );
+            renderProjects();
+          }
+        });
+
+        document.getElementById("loginModal").addEventListener("click", function (e) {
+          if (e.target === this) closeLoginModal();
+        });
+        document.getElementById("projectModal").addEventListener("click", function (e) {
+          if (e.target === this) closeProjectModal();
+        });
+
+        updateAuthUI();
+        loadProjects(function () {
+          renderProjects();
+        });
+      })();
+
       function scrollToProjects() {
-        const el = document.getElementById("projects");
+        var el = document.getElementById("projects");
         if (!el) return;
         el.scrollIntoView({ behavior: "smooth", block: "start" });
       }
-
       function scrollToContact() {
-        const el = document.getElementById("contact");
+        var el = document.getElementById("contact");
         if (!el) return;
         el.scrollIntoView({ behavior: "smooth", block: "center" });
-      }
-
-      function alertEditHint() {
-        alert(
-          "이 카드 제목/설명을 직접 수정해서\n내 다음 프로젝트 계획이나 현재 진행 중인 작업을 적어 두면 좋아요."
-        );
       }
     </script>
   </body>
