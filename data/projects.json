@@ -1,0 +1,54 @@
+[
+  {
+    "id": "1",
+    "name": "카드 실적 관리 프로그램",
+    "description": "카드별 실적 조건을 한눈에 보고, 다음 달 혜택을 받기 위해서 필요한 실적을 자동으로 보여줍니다.",
+    "tech": "Android Studio, Gemini",
+    "features": [
+      "앱",
+      "안드로이드"
+    ],
+    "fileUrl": "https://favoritosmakers.github.io/card.apk",
+    "fileName": "다운로드 (APK파일)",
+    "imageUrl": ""
+  },
+  {
+    "id": "2",
+    "name": "무료 QR 코드 생성기",
+    "description": "텍스트, 인터넷 주소, 이메일 등을 입력하면 최대 5개까지 QR 코드를 만들 수 있습니다. 코드 가운데에 나만의 이미지를 넣을 수 있습니다.",
+    "tech": "Cursor, Android Studio, Gemini",
+    "features": [
+      "앱",
+      "안드로이드"
+    ],
+    "fileUrl": "https://favoritosmakers.github.io/g-QR.apk",
+    "fileName": "다운로드(APK파일)",
+    "imageUrl": ""
+  },
+  {
+    "id": "3",
+    "name": "블로그 글 자동 등록",
+    "description": "매일 아침, 미국 시황 분석을 요약하고 사람들이 좋아할 만한 ETF 한 종목에 대한 분석 보고서를 작성한 후 블로그에 자동으로 등록합니다.",
+    "tech": "(maybe) Python, Gemini, Wordpress...",
+    "features": [
+      "앱",
+      "안드로이드"
+    ],
+    "fileUrl": "",
+    "fileName": "제작중...",
+    "imageUrl": ""
+  },
+  {
+    "id": "4",
+    "name": "카드 실적 관리 프로그램",
+    "description": "이것은 아주 좋습니다.",
+    "tech": "Android Studio, Gemini, Grok",
+    "features": [
+      "앱",
+      "IOS"
+    ],
+    "fileUrl": "",
+    "fileName": "제작중...",
+    "imageUrl": "https://raw.githubusercontent.com/favoritosmakers/favoritosmakers.github.io/main/images/img_1772881090061_44586_1555294501.jpg"
+  }
+]
