@@ -994,6 +994,7 @@
           <label for="projectFile">파일 업로드 (APK 등)</label>
           <input type="file" id="projectFile" accept=".apk,.zip,.pdf,.jar" />
           <span id="projectFileName" class="hint"></span>
+          <span class="hint" style="display:block; margin-top:4px;">※ 약 4MB 이하 권장 (Vercel 제한)</span>
         </div>
         <div class="form-group">
           <label for="projectImage">대표 이미지</label>
@@ -1181,6 +1182,8 @@
           });
         }
 
+        var UPLOAD_SIZE_LIMIT_MB = 3.5;
+
         function callUploadApi(payload, cb) {
           var base = (typeof API_BASE_URL === "string" && API_BASE_URL) ? API_BASE_URL : "";
           var url = base + "/api/github-upload";
@@ -1189,7 +1192,18 @@
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload)
           })
-            .then(function (r) { return r.json(); })
+            .then(function (r) {
+              return r.text().then(function (text) {
+                if (r.status === 413 || (text && (text.indexOf("Payload") !== -1 || text.indexOf("Too Large") !== -1 || text.indexOf("Request Entity") !== -1))) {
+                  return { ok: false, error: "파일이 너무 큽니다. Vercel 제한(약 4.5MB)을 초과한 것 같습니다. 파일을 4MB 이하로 줄이거나, 대표 이미지만 올려 주세요." };
+                }
+                try {
+                  return text ? JSON.parse(text) : { ok: false, error: "빈 응답" };
+                } catch (e) {
+                  return { ok: false, error: "서버 응답 오류. 파일이 너무 클 수 있습니다(약 4MB 이하 권장)." };
+                }
+              });
+            })
             .then(function (data) {
               if (data.ok && Array.isArray(data.projects)) {
                 projects = data.projects;
@@ -1230,6 +1244,12 @@
           }
 
           if (fileFile && fileFile.size) {
+            if (fileFile.size > UPLOAD_SIZE_LIMIT_MB * 1024 * 1024) {
+              if (!confirm("파일이 약 " + UPLOAD_SIZE_LIMIT_MB + "MB를 넘습니다. Vercel 제한(약 4.5MB)으로 업로드가 실패할 수 있습니다. 계속할까요?")) {
+                if (cb) cb();
+                return;
+              }
+            }
             fileToBase64(fileFile).then(function (b64) {
               fileB64 = b64;
               fileName = fileFile.name || "file";
