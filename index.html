@@ -1404,6 +1404,7 @@
 
         document.getElementById("btnLogout").addEventListener("click", function () {
           setAuthToken(null);
+          renderProjects();
         });
 
         document.getElementById("btnAddProject").addEventListener("click", function () {
