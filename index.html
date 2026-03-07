@@ -994,6 +994,12 @@
           <label for="projectFile">파일 업로드 (APK 등, 약 4MB 이하)</label>
           <input type="file" id="projectFile" accept=".apk,.zip,.pdf,.jar" />
           <span id="projectFileName" class="hint"></span>
+          <div id="existingFileDeleteRow" style="display:none; margin-top:8px;">
+            <label style="display:inline-flex; align-items:center; gap:6px; cursor:pointer; font-size:0.85rem;">
+              <input type="checkbox" id="projectDeleteExistingFile" />
+              <span>기존 업로드 파일 삭제 희망 (체크 후 저장 시 GitHub에서 제거되고, 아래 URL 또는 새 업로드로 교체 가능)</span>
+            </label>
+          </div>
           <span class="hint" style="display:block; margin-top:4px;">※ 4MB 초과 시 아래에 GitHub raw URL 직접 입력</span>
         </div>
         <div class="form-group">
@@ -1118,6 +1124,9 @@
           document.getElementById("projectFileName").textContent = "";
           document.getElementById("projectImageName").textContent = "";
           document.getElementById("projectFileUrl").value = "";
+          document.getElementById("projectDeleteExistingFile").checked = false;
+          var deleteRow = document.getElementById("existingFileDeleteRow");
+          if (deleteRow) deleteRow.style.display = "none";
 
           if (id) {
             var p = projects.find(function (x) { return x.id === id; });
@@ -1127,7 +1136,9 @@
               document.getElementById("projectFeatures").value = (p.features && p.features.length) ? p.features.join(", ") : "";
               document.getElementById("projectTech").value = p.tech || "";
               document.getElementById("projectFileName").textContent = p.fileName ? "현재: " + p.fileName : "";
-              // 파일 URL 란은 수정 시 비워 둠 (업로드한 파일은 주소가 자동 생성되므로 링크란에 넣지 않음)
+              if (p.fileUrl || p.filePath) {
+                if (deleteRow) deleteRow.style.display = "block";
+              }
             }
           }
 
@@ -1233,7 +1244,7 @@
             });
         }
 
-        function saveProjectToGitHub(project, fileFile, imageFile, cb) {
+        function saveProjectToGitHub(project, fileFile, imageFile, existingFilePathToDelete, cb) {
           var fileB64 = null;
           var imageB64 = null;
           var fileName = null;
@@ -1245,6 +1256,7 @@
               projects: projects,
               projectId: project.id
             };
+            if (existingFilePathToDelete) payload.existingFilePathToDelete = existingFilePathToDelete;
             if (fileB64) {
               payload.fileBase64 = fileB64;
               payload.fileName = fileName;
@@ -1448,6 +1460,7 @@
           var fileUrlInput = document.getElementById("projectFileUrl").value.trim();
           var fileFile = fileInput.files[0];
           var imageFile = imageInput.files[0];
+          var deleteExistingFile = document.getElementById("projectDeleteExistingFile").checked;
 
           if (!name) {
             alert("프로젝트 이름을 입력해 주세요.");
@@ -1458,6 +1471,7 @@
           var filePathFromUrl = fileUrlInput ? pathFromFileUrl(fileUrlInput) : null;
           var fileNameFromUrl = fileUrlInput ? (fileUrlInput.split("/").pop() || "").split("?")[0] : "";
 
+          var existingFilePathToDelete = null;
           var project;
           if (editingId) {
             project = projects.find(function (p) { return p.id === editingId; });
@@ -1466,6 +1480,12 @@
             project.description = desc;
             project.tech = tech;
             project.features = features;
+            if (deleteExistingFile && (project.fileUrl || project.filePath)) {
+              existingFilePathToDelete = project.filePath || pathFromFileUrl(project.fileUrl);
+              project.fileUrl = "";
+              project.filePath = null;
+              project.fileName = "제작중...";
+            }
             if (fileFile) {
               project.fileName = fileFile.name;
               project.fileUrl = "";
@@ -1473,7 +1493,7 @@
               project.fileUrl = fileUrlInput;
               project.filePath = filePathFromUrl;
               project.fileName = fileNameFromUrl || "다운로드";
-            } else {
+            } else if (!existingFilePathToDelete) {
               project.fileName = project.fileName || "제작중...";
             }
           } else {
@@ -1495,11 +1515,12 @@
 
           saveProjectsToStorage();
           if (fileFile || imageFile) {
-            saveProjectToGitHub(project, fileFile, imageFile, function () {
+            saveProjectToGitHub(project, fileFile, imageFile, existingFilePathToDelete, function () {
               renderProjects();
             });
           } else {
             var payload = { action: "save", projects: projects, projectId: project.id };
+            if (existingFilePathToDelete) payload.existingFilePathToDelete = existingFilePathToDelete;
             if (fileUrlInput && !fileFile) {
               payload.fileUrl = fileUrlInput;
               payload.filePath = filePathFromUrl;

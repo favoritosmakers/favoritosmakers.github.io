@@ -171,6 +171,7 @@ export async function POST(request) {
     deletedProject,
     fileUrl: bodyFileUrl,
     filePath: bodyFilePath,
+    existingFilePathToDelete,
   } = body;
 
   if (action !== "save" && action !== "delete") {
@@ -199,6 +200,11 @@ export async function POST(request) {
         const existing = await githubGet(deletedProject.imagePath);
         if (existing && existing.sha) await githubDelete(deletedProject.imagePath, existing.sha);
       }
+    }
+
+    if (action === "save" && existingFilePathToDelete) {
+      const existing = await githubGet(existingFilePathToDelete);
+      if (existing && existing.sha) await githubDelete(existingFilePathToDelete, existing.sha);
     }
 
     if (action === "save" && projectId != null) {
