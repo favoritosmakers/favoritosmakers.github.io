@@ -991,10 +991,15 @@
           <input type="text" id="projectTech" placeholder="예: Android Studio, Gemini" />
         </div>
         <div class="form-group">
-          <label for="projectFile">파일 업로드 (APK 등)</label>
+          <label for="projectFile">파일 업로드 (APK 등, 약 4MB 이하)</label>
           <input type="file" id="projectFile" accept=".apk,.zip,.pdf,.jar" />
           <span id="projectFileName" class="hint"></span>
-          <span class="hint" style="display:block; margin-top:4px;">※ 약 4MB 이하 권장 (Vercel 제한)</span>
+          <span class="hint" style="display:block; margin-top:4px;">※ 4MB 초과 시 아래에 GitHub raw URL 직접 입력</span>
+        </div>
+        <div class="form-group">
+          <label for="projectFileUrl">파일 URL (4MB 초과 시 GitHub에 올린 뒤 raw URL 붙여넣기)</label>
+          <input type="text" id="projectFileUrl" placeholder="https://raw.githubusercontent.com/계정/저장소/branch/downloads/파일.apk" />
+          <span class="hint" style="display:block; margin-top:4px;">파일 업로드와 동시에 쓰면 업로드한 파일이 적용됩니다.</span>
         </div>
         <div class="form-group">
           <label for="projectImage">대표 이미지</label>
@@ -1112,6 +1117,7 @@
           document.getElementById("projectImage").value = "";
           document.getElementById("projectFileName").textContent = "";
           document.getElementById("projectImageName").textContent = "";
+          document.getElementById("projectFileUrl").value = "";
 
           if (id) {
             var p = projects.find(function (x) { return x.id === id; });
@@ -1121,6 +1127,7 @@
               document.getElementById("projectFeatures").value = (p.features && p.features.length) ? p.features.join(", ") : "";
               document.getElementById("projectTech").value = p.tech || "";
               document.getElementById("projectFileName").textContent = p.fileName ? "현재: " + p.fileName : "";
+              if (p.fileUrl) document.getElementById("projectFileUrl").value = p.fileUrl;
             }
           }
 
@@ -1303,7 +1310,11 @@
               ? (function () {
                   var fn = p.fileName || "";
                   var ext = fn.indexOf(".") >= 0 ? fn.slice(fn.lastIndexOf(".") + 1).toUpperCase() : "";
-                  return "다운로드(" + (ext || "파일") + "파일)";
+                  if (!ext && p.fileUrl) {
+                    var seg = (p.fileUrl.split("/").pop() || "");
+                    if (seg.indexOf(".") >= 0) ext = seg.slice(seg.lastIndexOf(".") + 1).toUpperCase();
+                  }
+                  return ext ? "다운로드(" + ext + "파일)" : "다운로드(파일)";
                 })()
               : "제작중...";
             var downloadHtml = (p.fileUrl && p.fileUrl !== "#")
@@ -1340,15 +1351,29 @@
             btn.addEventListener("click", function () {
               if (!confirm("이 프로젝트를 삭제할까요?")) return;
               var id = btn.getAttribute("data-id");
+              var deleted = projects.find(function (p) { return p.id === id; });
+              var filePath = deleted && (deleted.filePath || pathFromFileUrl(deleted.fileUrl));
+              var imagePath = deleted && (deleted.imagePath || pathFromFileUrl(deleted.imageUrl));
               projects = projects.filter(function (p) { return p.id !== id; });
               saveProjectsToStorage();
-              callUploadApi({ action: "delete", projects: projects }, function (err) {
+              callUploadApi({
+                action: "delete",
+                projects: projects,
+                deletedProject: (filePath || imagePath) ? { filePath: filePath || null, imagePath: imagePath || null } : null
+              }, function (err) {
                 if (err) alert("삭제 반영 실패: " + err);
                 renderProjects();
               });
               renderProjects();
             });
           });
+        }
+
+        function pathFromFileUrl(url) {
+          if (!url || typeof url !== "string") return null;
+          var parts = url.split("/");
+          if (parts[2] !== "raw.githubusercontent.com" || parts.length < 7) return null;
+          return parts.slice(6).join("/");
         }
 
         function escapeHtml(s) {
@@ -1420,6 +1445,7 @@
           var tech = document.getElementById("projectTech").value.trim();
           var fileInput = document.getElementById("projectFile");
           var imageInput = document.getElementById("projectImage");
+          var fileUrlInput = document.getElementById("projectFileUrl").value.trim();
           var fileFile = fileInput.files[0];
           var imageFile = imageInput.files[0];
 
@@ -1429,6 +1455,8 @@
           }
 
           var features = featuresStr ? featuresStr.split(",").map(function (s) { return s.trim(); }).filter(Boolean) : [];
+          var filePathFromUrl = fileUrlInput ? pathFromFileUrl(fileUrlInput) : null;
+          var fileNameFromUrl = fileUrlInput ? (fileUrlInput.split("/").pop() || "").split("?")[0] : "";
 
           var project;
           if (editingId) {
@@ -1438,8 +1466,16 @@
             project.description = desc;
             project.tech = tech;
             project.features = features;
-            project.fileName = project.fileName || (fileFile ? fileFile.name : "제작중...");
-            if (!project.fileUrl && fileFile) project.fileUrl = "";
+            if (fileFile) {
+              project.fileName = fileFile.name;
+              project.fileUrl = "";
+            } else if (fileUrlInput) {
+              project.fileUrl = fileUrlInput;
+              project.filePath = filePathFromUrl;
+              project.fileName = fileNameFromUrl || "다운로드";
+            } else {
+              project.fileName = project.fileName || "제작중...";
+            }
           } else {
             project = {
               id: nextId(),
@@ -1447,8 +1483,9 @@
               description: desc,
               tech: tech,
               features: features,
-              fileUrl: fileFile ? "" : "",
-              fileName: fileFile ? (fileFile.name || "다운로드") : "제작중...",
+              fileUrl: fileFile ? "" : (fileUrlInput || ""),
+              fileName: fileFile ? (fileFile.name || "다운로드") : (fileNameFromUrl || (fileUrlInput ? "다운로드" : "제작중...")),
+              filePath: filePathFromUrl || null,
               imageUrl: ""
             };
             projects.push(project);
@@ -1462,13 +1499,16 @@
               renderProjects();
             });
           } else {
-            callUploadApi(
-              { action: "save", projects: projects, projectId: project.id },
-              function (err) {
-                if (err) alert("저장 실패: " + err);
-                renderProjects();
-              }
-            );
+            var payload = { action: "save", projects: projects, projectId: project.id };
+            if (fileUrlInput && !fileFile) {
+              payload.fileUrl = fileUrlInput;
+              payload.filePath = filePathFromUrl;
+              payload.fileName = project.fileName;
+            }
+            callUploadApi(payload, function (err) {
+              if (err) alert("저장 실패: " + err);
+              renderProjects();
+            });
             renderProjects();
           }
         });

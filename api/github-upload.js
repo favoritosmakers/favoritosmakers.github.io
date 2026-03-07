@@ -168,6 +168,9 @@ export async function POST(request) {
     fileName,
     imageBase64,
     imageFileName,
+    deletedProject,
+    fileUrl: bodyFileUrl,
+    filePath: bodyFilePath,
   } = body;
 
   if (action !== "save" && action !== "delete") {
@@ -187,10 +190,25 @@ export async function POST(request) {
   const projects = [...projectsList];
 
   try {
+    if (action === "delete" && deletedProject) {
+      if (deletedProject.filePath) {
+        const existing = await githubGet(deletedProject.filePath);
+        if (existing && existing.sha) await githubDelete(deletedProject.filePath, existing.sha);
+      }
+      if (deletedProject.imagePath) {
+        const existing = await githubGet(deletedProject.imagePath);
+        if (existing && existing.sha) await githubDelete(deletedProject.imagePath, existing.sha);
+      }
+    }
+
     if (action === "save" && projectId != null) {
       const project = projects.find((p) => p.id === projectId);
       if (project) {
-        if (fileBase64 && fileName) {
+        if (bodyFileUrl && !fileBase64) {
+          project.fileUrl = bodyFileUrl;
+          project.filePath = bodyFilePath || pathFromFileUrl(bodyFileUrl) || null;
+          if (fileName) project.fileName = fileName;
+        } else if (fileBase64 && fileName) {
           const oldPath = project.filePath || pathFromFileUrl(project.fileUrl) || null;
           const isDifferentFile = oldPath && project.fileName && fileName !== project.fileName;
           let path;
