@@ -42,5 +42,18 @@
     "imageUrl": "https://raw.githubusercontent.com/favoritosmakers/favoritosmakers.github.io/main/images/img_1772888133409_autopost.jpg",
     "imagePath": "images/img_1772888133409_autopost.jpg",
     "filePath": null
+  },
+  {
+    "id": "4",
+    "name": "제텔카스텐 (생각 정리)",
+    "description": "독일 학생들이 학습할때 사용하는 카드관리법(제텔카스텐)을 웹앱으로 구현",
+    "tech": "Claude",
+    "features": [
+      "웹"
+    ],
+    "fileUrl": "https://favoritismakers.github.io/zettelkasten",
+    "fileName": "zettelkasten",
+    "filePath": null,
+    "imageUrl": ""
   }
 ]
