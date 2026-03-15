@@ -329,6 +329,9 @@
 
   const app      = initializeApp(firebaseConfig);
   const auth     = getAuth(app);
+// ★ 이 줄 추가 — firebaseapp.com 주소로 고정
+  auth.tenantId = null;
+//
   const db       = getFirestore(app);
   const provider = new GoogleAuthProvider();
 
