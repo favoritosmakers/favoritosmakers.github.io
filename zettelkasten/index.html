@@ -15,15 +15,11 @@
   </script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background: #f5f4f0;
-      color: #1a1a1a;
-      min-height: 100vh;
+      background: #f5f4f0; color: #1a1a1a; min-height: 100vh;
     }
 
-    /* 로딩 */
     .loading-screen {
       position: fixed; inset: 0; background: #fff;
       display: flex; flex-direction: column;
@@ -33,15 +29,12 @@
     .loading-screen.hidden { display: none; }
     .spinner {
       width: 32px; height: 32px;
-      border: 2.5px solid #e0dfd8;
-      border-top-color: #534AB7;
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
+      border: 2.5px solid #e0dfd8; border-top-color: #534AB7;
+      border-radius: 50%; animation: spin 0.8s linear infinite;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
     .loading-text { font-size: 14px; color: #aaa; }
 
-    /* 로그인 화면 */
     .login-screen {
       position: fixed; inset: 0; background: #fff;
       display: flex; flex-direction: column;
@@ -51,9 +44,8 @@
     .login-screen.hidden { display: none; }
     .login-logo {
       width: 56px; height: 56px; border-radius: 14px;
-      background: #EEEDFE;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 26px; margin-bottom: 20px;
+      background: #EEEDFE; display: flex; align-items: center;
+      justify-content: center; font-size: 26px; margin-bottom: 20px;
     }
     .login-title { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
     .login-desc { font-size: 14px; color: #888; text-align: center; line-height: 1.6; margin-bottom: 36px; }
@@ -69,40 +61,34 @@
     .google-btn:active { background: #f5f4f0; }
     .google-btn:disabled { opacity: 0.6; cursor: default; }
 
-    /* 오프라인 배너 */
     .offline-banner {
       display: none; background: #fff3cd; color: #856404;
       font-size: 12px; text-align: center; padding: 6px;
     }
     .offline-banner.show { display: block; }
 
-    /* 헤더 */
     .header {
       position: sticky; top: 0; z-index: 50;
-      background: #fff; border-bottom: 0.5px solid #e0dfd8;
-      padding: 12px 16px;
+      background: #fff; border-bottom: 0.5px solid #e0dfd8; padding: 12px 16px;
     }
     .header-top { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
     .header-top h1 { font-size: 16px; font-weight: 600; flex: 1; }
     .header-actions { display: flex; align-items: center; gap: 8px; }
     .add-btn {
-      font-size: 13px; padding: 7px 14px;
-      border-radius: 20px; border: none;
-      background: #534AB7; color: #fff;
-      cursor: pointer; -webkit-tap-highlight-color: transparent;
+      font-size: 13px; padding: 7px 14px; border-radius: 20px; border: none;
+      background: #534AB7; color: #fff; cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
     }
     .avatar {
       width: 30px; height: 30px; border-radius: 50%;
-      object-fit: cover; cursor: pointer;
-      border: 1.5px solid #e0dfd8;
+      object-fit: cover; cursor: pointer; border: 1.5px solid #e0dfd8;
     }
     .avatar-placeholder {
       width: 30px; height: 30px; border-radius: 50%;
       background: #EEEDFE; border: 1.5px solid #b0a8e8;
       display: flex; align-items: center; justify-content: center;
       font-size: 12px; font-weight: 600; color: #534AB7;
-      cursor: pointer; flex-shrink: 0;
-      -webkit-tap-highlight-color: transparent;
+      cursor: pointer; flex-shrink: 0; -webkit-tap-highlight-color: transparent;
     }
     .search-input {
       width: 100%; font-size: 14px; padding: 9px 14px;
@@ -111,10 +97,8 @@
     }
     .search-input:focus { border-color: #7F77DD; background: #fff; }
 
-    /* 유저 메뉴 */
     .user-menu {
-      display: none; position: fixed;
-      top: 60px; right: 16px;
+      display: none; position: fixed; top: 60px; right: 16px;
       background: #fff; border: 0.5px solid #d8d7d0;
       border-radius: 12px; padding: 14px 16px;
       z-index: 100; min-width: 200px;
@@ -124,16 +108,13 @@
     .user-menu-name { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
     .user-menu-email { font-size: 12px; color: #888; margin-bottom: 12px; }
     .logout-btn {
-      width: 100%; font-size: 13px; padding: 8px;
-      border-radius: 8px; border: 0.5px solid #f0a0a0;
-      background: #fff5f5; color: #c0392b;
+      width: 100%; font-size: 13px; padding: 8px; border-radius: 8px;
+      border: 0.5px solid #f0a0a0; background: #fff5f5; color: #c0392b;
       cursor: pointer; font-family: inherit;
     }
 
-    /* 메인 */
     .main { padding: 14px 14px 80px; }
 
-    /* 상자 */
     .box-wrap {
       margin-bottom: 12px; border-radius: 14px;
       border: 0.5px solid #d8d7d0; background: #fff; overflow: hidden;
@@ -154,9 +135,8 @@
     }
     .box-label { font-size: 14px; font-weight: 600; flex: 1; }
     .box-count {
-      font-size: 11px; color: #888;
-      background: #f5f4f0; border: 0.5px solid #d8d7d0;
-      border-radius: 99px; padding: 2px 9px;
+      font-size: 11px; color: #888; background: #f5f4f0;
+      border: 0.5px solid #d8d7d0; border-radius: 99px; padding: 2px 9px;
     }
     .box-chevron { font-size: 11px; color: #aaa; transition: transform 0.25s; }
     .box-wrap.open .box-chevron { transform: rotate(180deg); }
@@ -168,7 +148,6 @@
     .box-wrap.open .box-body { max-height: 9999px; opacity: 1; }
     .drawers { padding: 8px 10px 10px; display: flex; flex-direction: column; gap: 6px; }
 
-    /* 서랍 */
     .drawer-wrap {
       border-radius: 10px; border: 0.5px solid #e0dfd8;
       background: #fafaf8; overflow: hidden;
@@ -221,7 +200,6 @@
 
     .empty-global { text-align: center; color: #aaa; font-size: 14px; padding: 60px 0; line-height: 1.8; }
 
-    /* 모달 바텀시트 */
     .modal-backdrop {
       display: none; position: fixed; inset: 0;
       background: rgba(0,0,0,0.45); z-index: 100;
@@ -241,8 +219,7 @@
     .field { margin-bottom: 12px; }
     .field label { font-size: 12px; color: #888; display: block; margin-bottom: 5px; }
     .field input, .field textarea {
-      width: 100%; font-size: 14px;
-      border: 0.5px solid #d8d7d0; border-radius: 10px;
+      width: 100%; font-size: 14px; border: 0.5px solid #d8d7d0; border-radius: 10px;
       padding: 10px 12px; background: #f5f4f0; color: #1a1a1a;
       resize: none; font-family: inherit; outline: none;
     }
@@ -256,27 +233,22 @@
     }
     .modal-btns .save { background: #534AB7; border-color: #534AB7; color: #fff; font-weight: 600; }
 
-    /* 토스트 */
     .toast {
-      position: fixed; bottom: 24px; left: 50%;
-      transform: translateX(-50%);
-      background: #1a1a1a; color: #fff;
-      font-size: 12px; padding: 8px 18px;
-      border-radius: 99px; opacity: 0;
-      transition: opacity 0.2s; pointer-events: none; z-index: 400;
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+      background: #1a1a1a; color: #fff; font-size: 12px; padding: 8px 18px;
+      border-radius: 99px; opacity: 0; transition: opacity 0.2s;
+      pointer-events: none; z-index: 400;
     }
     .toast.show { opacity: 1; }
   </style>
 </head>
 <body>
 
-<!-- 로딩 -->
 <div class="loading-screen" id="loading">
   <div class="spinner"></div>
-  <div class="loading-text">불러오는 중...</div>
+  <div class="loading-text" id="loading-text">불러오는 중...</div>
 </div>
 
-<!-- 로그인 화면 -->
 <div class="login-screen hidden" id="login-screen">
   <div class="login-logo">🗃</div>
   <div class="login-title">제텔카스텐</div>
@@ -292,12 +264,10 @@
   </button>
 </div>
 
-<!-- 오프라인 배너 -->
 <div class="offline-banner" id="offline-banner">
   오프라인 상태입니다. 인터넷 연결 후 자동 동기화됩니다.
 </div>
 
-<!-- 앱 본체 -->
 <div id="app" style="display:none">
   <div class="header">
     <div class="header-top">
@@ -310,8 +280,6 @@
     <input class="search-input" type="text" id="search" placeholder="카드 검색..." oninput="render()">
   </div>
   <div class="main" id="cabinet"></div>
-
-  <!-- 유저 메뉴 -->
   <div class="user-menu" id="user-menu">
     <div class="user-menu-name" id="user-name"></div>
     <div class="user-menu-email" id="user-email"></div>
@@ -319,7 +287,6 @@
   </div>
 </div>
 
-<!-- 카드 편집 모달 -->
 <div class="modal-backdrop" id="modal" onclick="handleBackdropClick(event)">
   <div class="modal">
     <div class="modal-handle"></div>
@@ -337,7 +304,6 @@
 
 <div class="toast" id="toast"></div>
 
-<!-- Firebase SDK -->
 <script type="module">
   import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
   import {
@@ -368,28 +334,30 @@
 
   let unsubscribeSnapshot = null;
 
-  // 오프라인 감지
   window.addEventListener('online',  () => document.getElementById('offline-banner').classList.remove('show'));
   window.addEventListener('offline', () => document.getElementById('offline-banner').classList.add('show'));
 
-  // ── 리디렉션 후 돌아왔을 때 결과 처리 ──────────────
-  // 로그인 버튼 클릭 → Google 로그인 페이지로 이동 → 앱으로 복귀 시 여기서 처리
-  getRedirectResult(auth).catch(e => {
-    if (e.code !== 'auth/cancelled-popup-request') {
-      console.error('redirect 결과 오류:', e.message);
+  // ── 핵심: 리디렉션 복귀 후 결과 처리 ────────────────
+  // Google 로그인 후 앱으로 돌아오면 이 코드가 먼저 실행됨
+  try {
+    const result = await getRedirectResult(auth);
+    if (result && result.user) {
+      // 리디렉션 로그인 성공 — onAuthStateChanged가 이어서 처리
+      document.getElementById('loading-text').textContent = '로그인 중...';
     }
-  });
+  } catch (e) {
+    // 리디렉션 결과 없음 (첫 방문 또는 일반 새로고침) — 정상
+    console.log('redirect 결과 없음:', e.code);
+  }
 
-  // ── 인증 상태 감지 ──────────────────────────────────
+  // ── 인증 상태 감지 ────────────────────────────────
   onAuthStateChanged(auth, user => {
     document.getElementById('loading').classList.add('hidden');
 
     if (user) {
-      // 로그인 성공
       document.getElementById('login-screen').classList.add('hidden');
       document.getElementById('app').style.display = 'block';
 
-      // 아바타 표시
       const wrap = document.getElementById('avatar-wrap');
       if (user.photoURL) {
         wrap.innerHTML = `<img class="avatar" src="${user.photoURL}" onclick="toggleUserMenu()">`;
@@ -399,7 +367,6 @@
       document.getElementById('user-name').textContent  = user.displayName || '사용자';
       document.getElementById('user-email').textContent = user.email;
 
-      // 내 카드만 실시간 구독
       const colRef = collection(db, 'users', user.uid, 'cards');
       window._colRef = colRef;
       window._db     = db;
@@ -415,7 +382,6 @@
       });
 
     } else {
-      // 로그아웃 상태
       if (unsubscribeSnapshot) { unsubscribeSnapshot(); unsubscribeSnapshot = null; }
       window.cards = [];
       document.getElementById('app').style.display = 'none';
@@ -423,22 +389,16 @@
     }
   });
 
-  // ── Google 로그인 (redirect 방식 — 모바일 호환) ────
+  // ── Google 로그인 ──────────────────────────────────
   window.signInWithGoogle = async function () {
     const btn = document.getElementById('google-btn');
     btn.disabled = true;
-    btn.textContent = '이동 중...';
+    btn.textContent = 'Google로 이동 중...';
     try {
       await signInWithRedirect(auth, provider);
-      // 이 줄 이후는 실행되지 않음 — Google 페이지로 이동
     } catch (e) {
       btn.disabled = false;
-      btn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" style="flex-shrink:0">
-        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/>
-        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-      </svg> Google 계정으로 로그인`;
+      btn.textContent = 'Google 계정으로 로그인';
       alert('로그인 오류: ' + e.message);
     }
   };
@@ -501,7 +461,6 @@
 </script>
 
 <script>
-  // ── UI 상태 ───────────────────────────────────────
   window.cards       = [];
   window.openBoxes   = new Set();
   window.openDrawers = new Set();
