@@ -23,7 +23,7 @@
       min-height: 100vh;
     }
 
-    /* ── 로딩 화면 ── */
+    /* 로딩 */
     .loading-screen {
       position: fixed; inset: 0; background: #fff;
       display: flex; flex-direction: column;
@@ -41,12 +41,12 @@
     @keyframes spin { to { transform: rotate(360deg); } }
     .loading-text { font-size: 14px; color: #aaa; }
 
-    /* ── 로그인 화면 ── */
+    /* 로그인 화면 */
     .login-screen {
       position: fixed; inset: 0; background: #fff;
       display: flex; flex-direction: column;
       align-items: center; justify-content: center;
-      gap: 0; z-index: 200; padding: 40px 32px;
+      padding: 40px 32px; z-index: 200;
     }
     .login-screen.hidden { display: none; }
     .login-logo {
@@ -55,34 +55,28 @@
       display: flex; align-items: center; justify-content: center;
       font-size: 26px; margin-bottom: 20px;
     }
-    .login-title { font-size: 22px; font-weight: 700; color: #1a1a1a; margin-bottom: 8px; }
+    .login-title { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
     .login-desc { font-size: 14px; color: #888; text-align: center; line-height: 1.6; margin-bottom: 36px; }
     .google-btn {
       display: flex; align-items: center; gap: 12px;
-      width: 100%; max-width: 320px;
-      padding: 14px 20px;
-      border-radius: 12px;
-      border: 0.5px solid #d8d7d0;
+      width: 100%; max-width: 320px; padding: 14px 20px;
+      border-radius: 12px; border: 0.5px solid #d8d7d0;
       background: #fff; color: #1a1a1a;
       font-size: 15px; font-weight: 500;
-      cursor: pointer;
+      cursor: pointer; font-family: inherit;
       -webkit-tap-highlight-color: transparent;
-      font-family: inherit;
     }
     .google-btn:active { background: #f5f4f0; }
-    .google-icon {
-      width: 20px; height: 20px; flex-shrink: 0;
-    }
+    .google-btn:disabled { opacity: 0.6; cursor: default; }
 
-    /* ── 오프라인 배너 ── */
+    /* 오프라인 배너 */
     .offline-banner {
-      display: none;
-      background: #fff3cd; color: #856404;
+      display: none; background: #fff3cd; color: #856404;
       font-size: 12px; text-align: center; padding: 6px;
     }
     .offline-banner.show { display: block; }
 
-    /* ── 헤더 ── */
+    /* 헤더 */
     .header {
       position: sticky; top: 0; z-index: 50;
       background: #fff; border-bottom: 0.5px solid #e0dfd8;
@@ -101,15 +95,14 @@
       width: 30px; height: 30px; border-radius: 50%;
       object-fit: cover; cursor: pointer;
       border: 1.5px solid #e0dfd8;
-      -webkit-tap-highlight-color: transparent;
     }
     .avatar-placeholder {
       width: 30px; height: 30px; border-radius: 50%;
       background: #EEEDFE; border: 1.5px solid #b0a8e8;
       display: flex; align-items: center; justify-content: center;
       font-size: 12px; font-weight: 600; color: #534AB7;
-      cursor: pointer; -webkit-tap-highlight-color: transparent;
-      flex-shrink: 0;
+      cursor: pointer; flex-shrink: 0;
+      -webkit-tap-highlight-color: transparent;
     }
     .search-input {
       width: 100%; font-size: 14px; padding: 9px 14px;
@@ -118,7 +111,7 @@
     }
     .search-input:focus { border-color: #7F77DD; background: #fff; }
 
-    /* ── 유저 메뉴 ── */
+    /* 유저 메뉴 */
     .user-menu {
       display: none; position: fixed;
       top: 60px; right: 16px;
@@ -128,7 +121,7 @@
       box-shadow: 0 4px 20px rgba(0,0,0,0.1);
     }
     .user-menu.show { display: block; }
-    .user-menu-name { font-size: 14px; font-weight: 600; color: #1a1a1a; margin-bottom: 2px; }
+    .user-menu-name { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
     .user-menu-email { font-size: 12px; color: #888; margin-bottom: 12px; }
     .logout-btn {
       width: 100%; font-size: 13px; padding: 8px;
@@ -137,10 +130,10 @@
       cursor: pointer; font-family: inherit;
     }
 
-    /* ── 메인 ── */
+    /* 메인 */
     .main { padding: 14px 14px 80px; }
 
-    /* ── 상자 ── */
+    /* 상자 */
     .box-wrap {
       margin-bottom: 12px; border-radius: 14px;
       border: 0.5px solid #d8d7d0; background: #fff; overflow: hidden;
@@ -175,7 +168,7 @@
     .box-wrap.open .box-body { max-height: 9999px; opacity: 1; }
     .drawers { padding: 8px 10px 10px; display: flex; flex-direction: column; gap: 6px; }
 
-    /* ── 서랍 ── */
+    /* 서랍 */
     .drawer-wrap {
       border-radius: 10px; border: 0.5px solid #e0dfd8;
       background: #fafaf8; overflow: hidden;
@@ -228,7 +221,7 @@
 
     .empty-global { text-align: center; color: #aaa; font-size: 14px; padding: 60px 0; line-height: 1.8; }
 
-    /* ── 모달 바텀시트 ── */
+    /* 모달 바텀시트 */
     .modal-backdrop {
       display: none; position: fixed; inset: 0;
       background: rgba(0,0,0,0.45); z-index: 100;
@@ -263,7 +256,7 @@
     }
     .modal-btns .save { background: #534AB7; border-color: #534AB7; color: #fff; font-weight: 600; }
 
-    /* ── 토스트 ── */
+    /* 토스트 */
     .toast {
       position: fixed; bottom: 24px; left: 50%;
       transform: translateX(-50%);
@@ -288,8 +281,8 @@
   <div class="login-logo">🗃</div>
   <div class="login-title">제텔카스텐</div>
   <div class="login-desc">나만의 아이디어 카드 시스템<br>Google 계정으로 시작하세요</div>
-  <button class="google-btn" onclick="signInWithGoogle()">
-    <svg class="google-icon" viewBox="0 0 24 24">
+  <button class="google-btn" id="google-btn" onclick="signInWithGoogle()">
+    <svg width="20" height="20" viewBox="0 0 24 24" style="flex-shrink:0">
       <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
       <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
       <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/>
@@ -304,7 +297,7 @@
   오프라인 상태입니다. 인터넷 연결 후 자동 동기화됩니다.
 </div>
 
-<!-- 앱 본체 (로그인 후에만 표시) -->
+<!-- 앱 본체 -->
 <div id="app" style="display:none">
   <div class="header">
     <div class="header-top">
@@ -316,14 +309,13 @@
     </div>
     <input class="search-input" type="text" id="search" placeholder="카드 검색..." oninput="render()">
   </div>
-
   <div class="main" id="cabinet"></div>
 
   <!-- 유저 메뉴 -->
   <div class="user-menu" id="user-menu">
     <div class="user-menu-name" id="user-name"></div>
     <div class="user-menu-email" id="user-email"></div>
-    <button class="logout-btn" onclick="signOut()">로그아웃</button>
+    <button class="logout-btn" onclick="doSignOut()">로그아웃</button>
   </div>
 </div>
 
@@ -349,7 +341,8 @@
 <script type="module">
   import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
   import {
-    getAuth, GoogleAuthProvider, signInWithPopup,
+    getAuth, GoogleAuthProvider,
+    signInWithRedirect, getRedirectResult,
     signOut as fbSignOut, onAuthStateChanged
   } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
   import {
@@ -379,16 +372,24 @@
   window.addEventListener('online',  () => document.getElementById('offline-banner').classList.remove('show'));
   window.addEventListener('offline', () => document.getElementById('offline-banner').classList.add('show'));
 
-  // ── 인증 상태 감지 ──────────────────────────────
+  // ── 리디렉션 후 돌아왔을 때 결과 처리 ──────────────
+  // 로그인 버튼 클릭 → Google 로그인 페이지로 이동 → 앱으로 복귀 시 여기서 처리
+  getRedirectResult(auth).catch(e => {
+    if (e.code !== 'auth/cancelled-popup-request') {
+      console.error('redirect 결과 오류:', e.message);
+    }
+  });
+
+  // ── 인증 상태 감지 ──────────────────────────────────
   onAuthStateChanged(auth, user => {
     document.getElementById('loading').classList.add('hidden');
 
     if (user) {
-      // 로그인 상태
+      // 로그인 성공
       document.getElementById('login-screen').classList.add('hidden');
       document.getElementById('app').style.display = 'block';
 
-      // 아바타
+      // 아바타 표시
       const wrap = document.getElementById('avatar-wrap');
       if (user.photoURL) {
         wrap.innerHTML = `<img class="avatar" src="${user.photoURL}" onclick="toggleUserMenu()">`;
@@ -398,7 +399,7 @@
       document.getElementById('user-name').textContent  = user.displayName || '사용자';
       document.getElementById('user-email').textContent = user.email;
 
-      // 이 유저의 카드만 실시간 구독
+      // 내 카드만 실시간 구독
       const colRef = collection(db, 'users', user.uid, 'cards');
       window._colRef = colRef;
       window._db     = db;
@@ -422,24 +423,33 @@
     }
   });
 
-  // ── Google 로그인 ────────────────────────────────
+  // ── Google 로그인 (redirect 방식 — 모바일 호환) ────
   window.signInWithGoogle = async function () {
+    const btn = document.getElementById('google-btn');
+    btn.disabled = true;
+    btn.textContent = '이동 중...';
     try {
-      await signInWithPopup(auth, provider);
+      await signInWithRedirect(auth, provider);
+      // 이 줄 이후는 실행되지 않음 — Google 페이지로 이동
     } catch (e) {
-      if (e.code !== 'auth/popup-closed-by-user') {
-        alert('로그인 실패: ' + e.message);
-      }
+      btn.disabled = false;
+      btn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" style="flex-shrink:0">
+        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/>
+        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+      </svg> Google 계정으로 로그인`;
+      alert('로그인 오류: ' + e.message);
     }
   };
 
-  // ── 로그아웃 ─────────────────────────────────────
-  window.signOut = async function () {
-    await fbSignOut(auth);
+  // ── 로그아웃 ──────────────────────────────────────
+  window.doSignOut = async function () {
     document.getElementById('user-menu').classList.remove('show');
+    await fbSignOut(auth);
   };
 
-  // ── 저장 ─────────────────────────────────────────
+  // ── 저장 ──────────────────────────────────────────
   window.saveCard = async function () {
     const title = document.getElementById('m-title').value.trim();
     const body  = document.getElementById('m-body').value.trim();
@@ -455,8 +465,10 @@
     try {
       if (window.editingId) {
         const c = window.cards.find(x => x.id === window.editingId);
-        if (c) await setDoc(doc(db, 'users', window._uid, 'cards', c._docId),
-          { id: c.id, title, body, tags, links });
+        if (c) await setDoc(
+          doc(db, 'users', window._uid, 'cards', c._docId),
+          { id: c.id, title, body, tags, links }
+        );
       } else {
         const id = nextId();
         await addDoc(window._colRef, { id, title, body, tags, links });
@@ -470,15 +482,17 @@
     }
   };
 
-  // ── 삭제 ─────────────────────────────────────────
+  // ── 삭제 ──────────────────────────────────────────
   window.deleteCard = async function (id) {
     if (!confirm('이 카드를 삭제할까요?')) return;
     const c = window.cards.find(x => x.id === id);
     if (!c) return;
     const linked = window.cards.filter(x => (x.links || []).includes(id));
     for (const lc of linked) {
-      await setDoc(doc(db, 'users', window._uid, 'cards', lc._docId),
-        { ...lc, links: lc.links.filter(l => l !== id) });
+      await setDoc(
+        doc(db, 'users', window._uid, 'cards', lc._docId),
+        { ...lc, links: lc.links.filter(l => l !== id) }
+      );
     }
     await deleteDoc(doc(db, 'users', window._uid, 'cards', c._docId));
     window.openDrawers.delete(id);
@@ -487,25 +501,23 @@
 </script>
 
 <script>
-  // ── UI 상태 ──────────────────────────────────────
+  // ── UI 상태 ───────────────────────────────────────
   window.cards       = [];
   window.openBoxes   = new Set();
   window.openDrawers = new Set();
   window.editingId   = null;
 
-  // ── 유저 메뉴 ────────────────────────────────────
   window.toggleUserMenu = function () {
     document.getElementById('user-menu').classList.toggle('show');
   };
   document.addEventListener('click', e => {
     const menu = document.getElementById('user-menu');
     const wrap = document.getElementById('avatar-wrap');
-    if (!menu.contains(e.target) && !wrap.contains(e.target)) {
+    if (menu && wrap && !menu.contains(e.target) && !wrap.contains(e.target)) {
       menu.classList.remove('show');
     }
   });
 
-  // ── 토스트 ──────────────────────────────────────
   window.showToast = function (msg) {
     const el = document.getElementById('toast');
     el.textContent = msg;
@@ -513,7 +525,6 @@
     setTimeout(() => el.classList.remove('show'), 1600);
   };
 
-  // ── 그룹핑 ──────────────────────────────────────
   function groupByTag(list) {
     const map = {};
     list.forEach(c => {
@@ -525,7 +536,6 @@
     return map;
   }
 
-  // ── 토글 ────────────────────────────────────────
   window.toggleBox = function (tag) {
     openBoxes.has(tag) ? openBoxes.delete(tag) : openBoxes.add(tag);
     render();
@@ -546,7 +556,6 @@
     }, 120);
   };
 
-  // ── 모달 ────────────────────────────────────────
   window.openModal = function (id) {
     editingId = id;
     document.getElementById('modal-title').textContent = id ? '카드 편집' : '새 카드';
@@ -569,7 +578,6 @@
     if (e.target === document.getElementById('modal')) closeModal();
   };
 
-  // ── 렌더 ────────────────────────────────────────
   window.render = function () {
     const q = document.getElementById('search').value.toLowerCase();
     const filtered = q
