@@ -49,7 +49,7 @@
     "description": "독일 학생들이 학습할때 사용하는 카드관리법(제텔카스텐)을 웹앱으로 구현",
     "tech": "Claude",
     "features": [
-      "웹 앱"
+      "웹"
     ],
     "fileUrl": "http://zettelkasten-3074b.web.app",
     "fileName": "zettelkasten-3074b.web.app",
