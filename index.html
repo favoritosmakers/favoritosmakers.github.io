@@ -1323,8 +1323,10 @@
                   var hasProto = /^https?:\/\//i.test(cleanUrl);
                   var afterProto = hasProto ? cleanUrl.replace(/^https?:\/\//i, "") : cleanUrl;
                   var slashIdx = afterProto.indexOf("/");
-                  var hasPath = slashIdx !== -1 && slashIdx < afterProto.length - 1;
-                  var lastSeg = hasPath ? afterProto.slice(afterProto.lastIndexOf("/") + 1) : "";
+                  var host = slashIdx === -1 ? afterProto : afterProto.slice(0, slashIdx);
+                  var pathPart = slashIdx === -1 ? "" : afterProto.slice(slashIdx + 1);
+                  var hasPath = !!pathPart;
+                  var lastSeg = hasPath ? pathPart.slice(pathPart.lastIndexOf("/") + 1) : "";
 
                   var fn = p.fileName || "";
                   var ext = fn.indexOf(".") >= 0 ? fn.slice(fn.lastIndexOf(".") + 1).toUpperCase() : "";
@@ -1332,8 +1334,8 @@
                     ext = lastSeg.slice(lastSeg.lastIndexOf(".") + 1).toUpperCase();
                   }
 
-                  var isDomainLike = !hasPath && /\.[A-Za-z]{2,}$/.test(afterProto);
-                  var isWebLink = (!ext) && (hasProto || isDomainLike);
+                  var isDomainLikeHost = /\.[A-Za-z]{2,}$/.test(host);
+                  var isWebLink = (!ext) && (hasProto || isDomainLikeHost);
                   if (isWebLink) return "바로가기";
                   return ext ? "다운로드(" + ext + "파일)" : "다운로드(파일)";
                 })()
