@@ -55,5 +55,18 @@
     "fileName": "zettelkasten-3074b.web.app",
     "filePath": null,
     "imageUrl": ""
+  },
+  {
+    "id": "5",
+    "name": "제텔카스텐 (생각 정리)",
+    "description": "",
+    "tech": "Claude",
+    "features": [
+      "웹 앱"
+    ],
+    "fileUrl": "http://zettelkasten-3074b.web.app",
+    "fileName": "zettelkasten-3074b.web.app",
+    "filePath": null,
+    "imageUrl": ""
   }
 ]
