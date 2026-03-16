@@ -1320,24 +1320,31 @@
               ? (function () {
                   var url = p.fileUrl || "";
                   var cleanUrl = url.split("#")[0].split("?")[0];
-                  var hasProto = /^https?:\/\//i.test(cleanUrl);
-                  var afterProto = hasProto ? cleanUrl.replace(/^https?:\/\//i, "") : cleanUrl;
-                  var slashIdx = afterProto.indexOf("/");
-                  var host = slashIdx === -1 ? afterProto : afterProto.slice(0, slashIdx);
-                  var pathPart = slashIdx === -1 ? "" : afterProto.slice(slashIdx + 1);
-                  var hasPath = !!pathPart;
-                  var lastSeg = hasPath ? pathPart.slice(pathPart.lastIndexOf("/") + 1) : "";
+                  var isHttp = /^https?:\/\//i.test(cleanUrl);
 
+                  // 파일명에서 확장자 우선 추출
                   var fn = p.fileName || "";
-                  var ext = fn.indexOf(".") >= 0 ? fn.slice(fn.lastIndexOf(".") + 1).toUpperCase() : "";
-                  if (!ext && lastSeg && lastSeg.indexOf(".") >= 0) {
-                    ext = lastSeg.slice(lastSeg.lastIndexOf(".") + 1).toUpperCase();
+                  var ext = "";
+                  if (fn.indexOf(".") >= 0) {
+                    ext = fn.slice(fn.lastIndexOf(".") + 1).toUpperCase();
+                  } else {
+                    // 파일명에 없으면 URL 마지막 세그먼트에서 시도
+                    var afterProto = cleanUrl.replace(/^https?:\/\//i, "");
+                    var lastSeg = afterProto.slice(afterProto.lastIndexOf("/") + 1);
+                    if (lastSeg && lastSeg.indexOf(".") >= 0) {
+                      ext = lastSeg.slice(lastSeg.lastIndexOf(".") + 1).toUpperCase();
+                    }
                   }
 
-                  var isDomainLikeHost = /\.[A-Za-z]{2,}$/.test(host);
-                  var isWebLink = (!ext) && (hasProto || isDomainLikeHost);
-                  if (isWebLink) return "바로가기";
-                  return ext ? "다운로드(" + ext + "파일)" : "다운로드(파일)";
+                  // 실제 다운로드 파일로 취급할 확장자 목록 (필요시 추가)
+                  var downloadExts = ["APK", "ZIP", "PDF", "JAR"];
+                  var isDownloadExt = ext && downloadExts.indexOf(ext) !== -1;
+
+                  // HTTP(S) 이고, 위 확장자 목록에 없으면 웹 링크로 간주 → 바로가기
+                  if (isHttp && !isDownloadExt) return "바로가기";
+
+                  // 그 외에는 다운로드 버튼
+                  return isDownloadExt ? "다운로드(" + ext + "파일)" : "다운로드(파일)";
                 })()
               : "제작중...";
             var downloadHtml = (p.fileUrl && p.fileUrl !== "#")
