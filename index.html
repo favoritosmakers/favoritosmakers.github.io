@@ -932,7 +932,7 @@
             <a class="footer-link" href="#" target="_blank" rel="noreferrer">
               GitHub
             </a>
-            <a class="footer-link" href="#" target="_blank" rel="noreferrer">
+            <a class="footer-link" href="https://www.routiner7.com/mil" target="_blank" rel="noreferrer">
               Blog
             </a>
             <a class="footer-link" href="mailto:favoritosmakers@gmail.com">
@@ -1318,12 +1318,24 @@
             var chips = features.map(function (f) { return '<span class="chip">' + escapeHtml(f) + '</span>'; }).join("");
             var downloadLabel = (p.fileUrl && p.fileUrl !== "#")
               ? (function () {
+                  var url = p.fileUrl || "";
+                  var isHttp = /^https?:\/\//i.test(url);
                   var fn = p.fileName || "";
                   var ext = fn.indexOf(".") >= 0 ? fn.slice(fn.lastIndexOf(".") + 1).toUpperCase() : "";
-                  if (!ext && p.fileUrl) {
-                    var seg = (p.fileUrl.split("/").pop() || "");
-                    if (seg.indexOf(".") >= 0) ext = seg.slice(seg.lastIndexOf(".") + 1).toUpperCase();
+                  var cleanUrl = url.split("#")[0].split("?")[0];
+                  if (!ext && cleanUrl) {
+                    var afterProto = cleanUrl.replace(/^https?:\/\//i, "");
+                    var slashIdx = afterProto.indexOf("/");
+                    var hasPath = slashIdx !== -1 && slashIdx < afterProto.length - 1;
+                    var lastSeg = hasPath ? afterProto.slice(afterProto.lastIndexOf("/") + 1) : "";
+                    if (lastSeg && lastSeg.indexOf(".") >= 0) {
+                      ext = lastSeg.slice(lastSeg.lastIndexOf(".") + 1).toUpperCase();
+                    }
+                    var isPureDomain = isHttp && !hasPath;
+                    if (isPureDomain) ext = "";
                   }
+                  var isWebLink = isHttp && !ext;
+                  if (isWebLink) return "바로가기";
                   return ext ? "다운로드(" + ext + "파일)" : "다운로드(파일)";
                 })()
               : "제작중...";
