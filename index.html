@@ -1319,22 +1319,21 @@
             var downloadLabel = (p.fileUrl && p.fileUrl !== "#")
               ? (function () {
                   var url = p.fileUrl || "";
-                  var isHttp = /^https?:\/\//i.test(url);
+                  var cleanUrl = url.split("#")[0].split("?")[0];
+                  var hasProto = /^https?:\/\//i.test(cleanUrl);
+                  var afterProto = hasProto ? cleanUrl.replace(/^https?:\/\//i, "") : cleanUrl;
+                  var slashIdx = afterProto.indexOf("/");
+                  var hasPath = slashIdx !== -1 && slashIdx < afterProto.length - 1;
+                  var lastSeg = hasPath ? afterProto.slice(afterProto.lastIndexOf("/") + 1) : "";
+
                   var fn = p.fileName || "";
                   var ext = fn.indexOf(".") >= 0 ? fn.slice(fn.lastIndexOf(".") + 1).toUpperCase() : "";
-                  var cleanUrl = url.split("#")[0].split("?")[0];
-                  if (!ext && cleanUrl) {
-                    var afterProto = cleanUrl.replace(/^https?:\/\//i, "");
-                    var slashIdx = afterProto.indexOf("/");
-                    var hasPath = slashIdx !== -1 && slashIdx < afterProto.length - 1;
-                    var lastSeg = hasPath ? afterProto.slice(afterProto.lastIndexOf("/") + 1) : "";
-                    if (lastSeg && lastSeg.indexOf(".") >= 0) {
-                      ext = lastSeg.slice(lastSeg.lastIndexOf(".") + 1).toUpperCase();
-                    }
-                    var isPureDomain = isHttp && !hasPath;
-                    if (isPureDomain) ext = "";
+                  if (!ext && lastSeg && lastSeg.indexOf(".") >= 0) {
+                    ext = lastSeg.slice(lastSeg.lastIndexOf(".") + 1).toUpperCase();
                   }
-                  var isWebLink = isHttp && !ext;
+
+                  var isDomainLike = !hasPath && /\.[A-Za-z]{2,}$/.test(afterProto);
+                  var isWebLink = (!ext) && (hasProto || isDomainLike);
                   if (isWebLink) return "바로가기";
                   return ext ? "다운로드(" + ext + "파일)" : "다운로드(파일)";
                 })()
