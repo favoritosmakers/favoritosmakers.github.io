@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>유틸리티 허브</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0f0f13;
+    --surface: #18181f;
+    --surface2: #1f1f2a;
+    --border: #2a2a38;
+    --accent: #5b8dee;
+    --accent2: #a78bfa;
+    --text: #e8e8f0;
+    --muted: #7a7a9a;
+    --success: #34d399;
+    --warning: #fbbf24;
+    --radius: 14px;
+    --font-sans: 'Noto Sans KR', sans-serif;
+    --font-mono: 'DM Mono', monospace;
+  }
+
+  html, body {
+    height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  .app {
+    max-width: 480px;
+    margin: 0 auto;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 90px;
+  }
+
+  /* Header */
+  .header {
+    padding: 28px 20px 16px;
+    position: sticky;
+    top: 0;
+    background: var(--bg);
+    z-index: 100;
+  }
+  .header-title {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 500;
+    margin-bottom: 2px;
+  }
+  .header-sub {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.02em;
+  }
+  .header-sub span { color: var(--accent); }
+
+  /* Tab Nav */
+  .tab-nav {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 480px;
+    background: rgba(15,15,19,0.95);
+    backdrop-filter: blur(16px);
+    border-top: 1px solid var(--border);
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    z-index: 200;
+    padding: 8px 8px 16px;
+    gap: 4px;
+  }
+  .tab-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    padding: 7px 2px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    border-radius: 10px;
+    transition: background 0.2s;
+    font-family: var(--font-sans);
+  }
+  .tab-btn:active { background: var(--surface2); }
+  .tab-btn .ico { font-size: 18px; line-height: 1; }
+  .tab-btn .lbl {
+    font-size: 9px;
+    color: var(--muted);
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    transition: color 0.2s;
+    white-space: nowrap;
+  }
+  .tab-btn.active .lbl { color: var(--accent); }
+  .tab-btn.active { background: rgba(91,141,238,0.08); }
+
+  /* Panels */
+  .panel { display: none; padding: 4px 20px 20px; animation: fadeUp 0.25s ease; }
+  .panel.active { display: block; }
+  #panel-nuclear { padding-top: 0; }
+  /* 원전 탭 활성 시 헤더 padding 줄이기 */
+  body.nuclear-active .header { padding-top: 8px; padding-bottom: 8px; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Card */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px;
+    margin-bottom: 12px;
+  }
+  .card-title {
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 500;
+    margin-bottom: 14px;
+  }
+
+  /* ───── CALCULATOR ───── */
+  .calc-display {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 18px;
+    margin-bottom: 14px;
+    min-height: 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: flex-end;
+  }
+  .calc-expr {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--muted);
+    min-height: 18px;
+    word-break: break-all;
+    text-align: right;
+  }
+  .calc-result {
+    font-family: var(--font-mono);
+    font-size: 32px;
+    font-weight: 500;
+    color: var(--text);
+    letter-spacing: -0.02em;
+    word-break: break-all;
+    text-align: right;
+  }
+  .calc-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+  }
+  .calc-btn {
+    height: 58px;
+    border: none;
+    border-radius: 10px;
+    font-size: 18px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.12s;
+    font-family: var(--font-sans);
+    letter-spacing: 0;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .calc-btn:active { transform: scale(0.94); }
+  .btn-num { background: var(--surface2); color: var(--text); }
+  .btn-op { background: rgba(91,141,238,0.15); color: var(--accent); }
+  .btn-eq { background: var(--accent); color: #fff; }
+  .btn-fn { background: rgba(167,139,250,0.12); color: var(--accent2); font-size: 14px; }
+  .btn-zero { grid-column: span 2; }
+  .btn-clear { background: rgba(251,191,36,0.12); color: var(--warning); }
+
+  /* ───── POSTAL CODE ───── */
+  .input-wrap {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .inp {
+    flex: 1;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 13px 14px;
+    color: var(--text);
+    font-size: 14px;
+    font-family: var(--font-sans);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .inp:focus { border-color: var(--accent); }
+  .inp::placeholder { color: var(--muted); }
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 13px 18px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    font-family: var(--font-sans);
+    transition: opacity 0.2s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .btn-primary:active { opacity: 0.8; }
+  .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .result-box {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    min-height: 60px;
+  }
+  .result-item {
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  .result-item:last-child { border-bottom: none; padding-bottom: 0; }
+  .result-item:first-child { padding-top: 0; }
+  .result-zip {
+    font-family: var(--font-mono);
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--accent);
+    display: block;
+    margin-bottom: 3px;
+  }
+  .result-addr { color: var(--text); }
+  .result-jibun { color: var(--muted); font-size: 12px; margin-top: 2px; }
+  .placeholder-msg {
+    color: var(--muted);
+    font-size: 13px;
+    text-align: center;
+    padding: 10px 0;
+  }
+
+  /* ───── ROUTE ───── */
+  .route-row { display: flex; flex-direction: column; gap: 8px; margin-bottom: 8px; }
+  .route-connector {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 0;
+  }
+  .route-line {
+    width: 2px;
+    height: 20px;
+    background: var(--border);
+    margin-left: 5px;
+    border-radius: 2px;
+  }
+  .route-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 2px solid;
+    flex-shrink: 0;
+  }
+  .dot-start { border-color: var(--success); background: rgba(52,211,153,0.2); }
+  .dot-end { border-color: #f87171; background: rgba(248,113,113,0.2); }
+  .inp-with-dot {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .distance-result {
+    background: linear-gradient(135deg, rgba(91,141,238,0.1), rgba(167,139,250,0.1));
+    border: 1px solid rgba(91,141,238,0.25);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    margin-top: 12px;
+  }
+  .dist-label { font-size: 11px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 6px; }
+  .dist-km { font-family: var(--font-mono); font-size: 42px; font-weight: 500; color: var(--accent); line-height: 1; }
+  .dist-unit { font-size: 16px; color: var(--muted); margin-left: 4px; }
+  .dist-time { font-size: 13px; color: var(--muted); margin-top: 6px; }
+  .naver-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 12px;
+    padding: 10px 18px;
+    background: #03c75a;
+    color: #fff;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+    transition: opacity 0.2s;
+  }
+  .naver-link:active { opacity: 0.8; }
+
+  /* ───── EXCHANGE ───── */
+  .rate-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px;
+    margin-bottom: 10px;
+  }
+  .rate-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+  }
+  .rate-pair {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .flag { font-size: 20px; }
+  .rate-change {
+    font-size: 12px;
+    font-family: var(--font-mono);
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-weight: 500;
+  }
+  .up { background: rgba(52,211,153,0.12); color: var(--success); }
+  .dn { background: rgba(248,113,113,0.12); color: #f87171; }
+  .rate-value { font-family: var(--font-mono); font-size: 34px; font-weight: 500; color: var(--text); }
+  .rate-sub { font-size: 12px; color: var(--muted); margin-top: 3px; }
+
+  .convert-section { margin-top: 14px; }
+  .convert-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .convert-label { font-size: 12px; color: var(--muted); width: 40px; flex-shrink: 0; }
+  .convert-inp {
+    flex: 1;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    color: var(--text);
+    font-size: 15px;
+    font-family: var(--font-mono);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .convert-inp:focus { border-color: var(--accent); }
+  .convert-unit { font-size: 12px; color: var(--muted); width: 32px; text-align: right; flex-shrink: 0; }
+  .convert-arrow { text-align: center; color: var(--muted); font-size: 18px; margin: 4px 0; }
+
+  .update-time { font-size: 11px; color: var(--muted); text-align: right; margin-top: 6px; }
+  .refresh-btn {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 12px;
+    cursor: pointer;
+    font-family: var(--font-sans);
+    transition: all 0.2s;
+    margin-top: 4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .refresh-btn:active { border-color: var(--accent); color: var(--accent); }
+
+  .spin { animation: spin 1s linear infinite; display: inline-block; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .loading-txt { color: var(--muted); font-size: 13px; text-align: center; padding: 12px 0; }
+  .error-txt { color: #f87171; font-size: 13px; text-align: center; padding: 12px 0; }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <div class="header">
+    <div class="header-title">Chris's Utility Hub</div>
+    <div class="header-sub">자주 쓰는 <span>기능 모음</span></div>
+  </div>
+
+  <!-- ════════════════════ CALCULATOR ════════════════════ -->
+  <div id="panel-calc" class="panel active">
+    <div class="card">
+      <div class="card-title">계산기</div>
+      <div class="calc-display">
+        <div class="calc-expr" id="calc-expr"></div>
+        <div class="calc-result" id="calc-result">0</div>
+      </div>
+      <div class="calc-grid">
+        <button class="calc-btn btn-fn" onclick="calcFn('AC')">AC</button>
+        <button class="calc-btn btn-fn" onclick="calcFn('±')">±</button>
+        <button class="calc-btn btn-fn" onclick="calcFn('%')">%</button>
+        <button class="calc-btn btn-op" onclick="calcOp('÷')">÷</button>
+
+        <button class="calc-btn btn-num" onclick="calcNum('7')">7</button>
+        <button class="calc-btn btn-num" onclick="calcNum('8')">8</button>
+        <button class="calc-btn btn-num" onclick="calcNum('9')">9</button>
+        <button class="calc-btn btn-op" onclick="calcOp('×')">×</button>
+
+        <button class="calc-btn btn-num" onclick="calcNum('4')">4</button>
+        <button class="calc-btn btn-num" onclick="calcNum('5')">5</button>
+        <button class="calc-btn btn-num" onclick="calcNum('6')">6</button>
+        <button class="calc-btn btn-op" onclick="calcOp('−')">−</button>
+
+        <button class="calc-btn btn-num" onclick="calcNum('1')">1</button>
+        <button class="calc-btn btn-num" onclick="calcNum('2')">2</button>
+        <button class="calc-btn btn-num" onclick="calcNum('3')">3</button>
+        <button class="calc-btn btn-op" onclick="calcOp('+')">+</button>
+
+        <button class="calc-btn btn-num btn-zero" onclick="calcNum('0')">0</button>
+        <button class="calc-btn btn-num" onclick="calcNum('.')">.</button>
+        <button class="calc-btn btn-eq" onclick="calcEqual()">=</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════ POSTAL CODE ════════════════════ -->
+  <div id="panel-postal" class="panel">
+    <div class="card">
+      <div class="card-title">우편번호 검색</div>
+      <div id="postcode-embed" style="border:1px solid var(--border); border-radius:10px; overflow:hidden;"></div>
+      <div class="result-box" id="postal-result" style="display:none;">
+        <div class="placeholder-msg">주소를 선택하세요</div>
+      </div>
+    </div>
+  </div>
+  <!-- ════════════════════ EXCHANGE ════════════════════ -->
+  <div id="panel-fx" class="panel">
+    <div class="card">
+      <div class="card-title">실시간 환율</div>
+
+      <div class="rate-card" id="usd-card">
+        <div class="rate-header">
+          <div class="rate-pair">
+            <span class="flag">🇺🇸</span>
+            <span>USD / KRW</span>
+          </div>
+          <span class="rate-change" id="usd-change">—</span>
+        </div>
+        <div class="rate-value"><span id="usd-rate">—</span> <span style="font-size:16px;color:var(--muted)">원</span></div>
+        <div class="rate-sub" id="usd-sub">1 달러 기준</div>
+        <div class="convert-section">
+          <div class="convert-row">
+            <span class="convert-label">달러</span>
+            <input type="number" class="convert-inp" id="usd-inp" placeholder="0" oninput="convertUSD(this.value,'usd')">
+            <span class="convert-unit">USD</span>
+          </div>
+          <div class="convert-arrow">⇅</div>
+          <div class="convert-row">
+            <span class="convert-label">원화</span>
+            <input type="number" class="convert-inp" id="krw-usd-inp" placeholder="0" oninput="convertUSD(this.value,'krw')">
+            <span class="convert-unit">KRW</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="rate-card" id="jpy-card">
+        <div class="rate-header">
+          <div class="rate-pair">
+            <span class="flag">🇯🇵</span>
+            <span>JPY / KRW</span>
+          </div>
+          <span class="rate-change" id="jpy-change">—</span>
+        </div>
+        <div class="rate-value"><span id="jpy-rate">—</span> <span style="font-size:16px;color:var(--muted)">원</span></div>
+        <div class="rate-sub" id="jpy-sub">100엔 기준</div>
+        <div class="convert-section">
+          <div class="convert-row">
+            <span class="convert-label">엔화</span>
+            <input type="number" class="convert-inp" id="jpy-inp" placeholder="0" oninput="convertJPY(this.value,'jpy')">
+            <span class="convert-unit">JPY</span>
+          </div>
+          <div class="convert-arrow">⇅</div>
+          <div class="convert-row">
+            <span class="convert-label">원화</span>
+            <input type="number" class="convert-inp" id="krw-jpy-inp" placeholder="0" oninput="convertJPY(this.value,'krw')">
+            <span class="convert-unit">KRW</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-top:4px;">
+        <div class="update-time" id="fx-update-time">업데이트 대기 중...</div>
+        <button class="refresh-btn" onclick="fetchRates()">
+          <span id="refresh-ico">↻</span> 새로고침
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════ NUCLEAR ════════════════════ -->
+  <div id="panel-nuclear" class="panel" style="padding-top:0;">
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+        <div class="card-title" style="margin-bottom:0">원자력 발전 현황</div>
+        <button class="refresh-btn" onclick="fetchNuclear()" style="margin-top:0; padding:6px 12px; font-size:11px;">
+          <span id="nuclear-refresh-ico">↻</span> 새로고침
+        </button>
+      </div>
+
+      <!-- 합계 요약 -->
+      <div id="nuclear-summary" style="
+        background: linear-gradient(135deg, rgba(52,211,153,0.1), rgba(91,141,238,0.1));
+        border: 1px solid rgba(52,211,153,0.2);
+        border-radius: 12px; padding: 14px; margin-bottom: 12px; text-align:center;">
+        <div style="font-size:11px; color:var(--muted); letter-spacing:0.1em; text-transform:uppercase; margin-bottom:4px;">운전중 / 전체 호기</div>
+        <div style="font-family:var(--font-mono); font-size:32px; font-weight:500; color:var(--success);">
+          <span id="nuclear-total">—</span>
+        </div>
+        <div style="font-size:11px; color:var(--muted); margin-top:4px;" id="nuclear-update-time">데이터 로드 중...</div>
+      </div>
+
+      <!-- 발전소 그룹별 소계 바 -->
+      <div id="nuclear-group-bars" style="margin-bottom:12px;"></div>
+
+      <!-- 호기별 카드 목록 -->
+      <div id="nuclear-units"></div>
+    </div>
+  </div>
+
+</div>
+<nav class="tab-nav">
+  <button class="tab-btn active" onclick="switchTab('calc', this)">
+    <span class="ico">🧮</span>
+    <span class="lbl">계산기</span>
+  </button>
+  <button class="tab-btn" onclick="switchTab('postal', this)">
+    <span class="ico">📮</span>
+    <span class="lbl">우편번호</span>
+  </button>
+  <button class="tab-btn" onclick="switchTab('fx', this)">
+    <span class="ico">💱</span>
+    <span class="lbl">환율</span>
+  </button>
+  <button class="tab-btn" onclick="switchTab('nuclear', this)">
+    <span class="ico">⚛️</span>
+    <span class="lbl">원전현황</span>
+  </button>
+</nav>
+
+<script>
+// ─────────────── TAB ───────────────
+function switchTab(name, el) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel-' + name).classList.add('active');
+  el.classList.add('active');
+  document.body.classList.toggle('nuclear-active', name === 'nuclear');
+  if (name === 'fx' && !fxLoaded) fetchRates();
+  if (name === 'nuclear' && !nuclearLoaded) fetchNuclear();
+  if (name === 'postal') initDaumPostcode();
+}
+
+// ─────────────── NUCLEAR ───────────────
+let nuclearLoaded = false;
+let nuclearTimer = null;
+const NUCLEAR_API = '/nuclear-proxy.php';
+const NUCLEAR_KEY = ''; // 키는 프록시 서버에서 처리
+const REFRESH_INTERVAL = 60000; // 1분마다 자동 갱신
+
+const GROUP_COLORS = {
+  '고리': '#f87171',
+  '새울': '#fb923c',
+  '월성': '#fbbf24',
+  '한빛': '#34d399',
+  '한울': '#5b8dee',
+};
+
+async function fetchNuclear() {
+  nuclearLoaded = true;
+  const ico = document.getElementById('nuclear-refresh-ico');
+  ico.classList.add('spin');
+
+  try {
+    const res  = await fetch(NUCLEAR_API);
+    const data = await res.json();
+
+    if (!data.success || !data.sites?.length) throw new Error('데이터가 없습니다');
+
+    renderNuclear(data.sites, data.updated);
+
+    clearInterval(nuclearTimer);
+    nuclearTimer = setInterval(fetchNuclear, REFRESH_INTERVAL);
+
+  } catch (err) {
+    document.getElementById('nuclear-units').innerHTML =
+      `<div class="error-txt" style="padding:20px 0">데이터 로드 실패: ${err.message}</div>`;
+    document.getElementById('nuclear-update-time').textContent = '로드 실패';
+    document.getElementById('nuclear-total').textContent = '—';
+  }
+  ico.classList.remove('spin');
+}
+
+const STATUS_COLOR = {
+  '운전':   'var(--success)',
+  '정비':   'var(--warning)',
+  '시운전': '#a78bfa',
+  '건설중': '#5b8dee',
+  '미운영': 'var(--muted)',
+};
+const STATUS_ICON = {
+  '운전':   '●',
+  '정비':   '▲',
+  '시운전': '◆',
+  '건설중': '■',
+  '미운영': '○',
+};
+
+function renderNuclear(sites, updated) {
+  // 전체 호기 수 / 운전 중 호기 수 집계
+  let totalUnits = 0, runningUnits = 0;
+  sites.forEach(site => {
+    site.units.forEach(u => {
+      totalUnits++;
+      if (u.st === '운전') runningUnits++;
+    });
+  });
+
+  // 요약 카드 업데이트
+  document.getElementById('nuclear-total').textContent = `${runningUnits} / ${totalUnits}`;
+
+  // 기준 시각
+  const d = new Date(updated);
+  document.getElementById('nuclear-update-time').textContent =
+    `${d.getMonth()+1}월 ${d.getDate()}일 ${d.getHours()}시 ${d.getMinutes().toString().padStart(2,'0')}분 기준 · 1분마다 자동갱신`;
+
+  // 발전소별 현황 바
+  const barsHtml = sites.map(site => {
+    const total    = site.units.length;
+    const running  = site.units.filter(u => u.st === '운전').length;
+    const maint    = site.units.filter(u => u.st === '정비').length;
+    const trial    = site.units.filter(u => u.st === '시운전').length;
+    const constr   = site.units.filter(u => u.st === '건설중').length;
+    const color    = GROUP_COLORS[site.name] || '#a78bfa';
+    const pct      = total > 0 ? (running / total * 100) : 0;
+    const extras   = [
+      trial  > 0 ? `<span style="color:#a78bfa">시운전 ${trial}</span>` : '',
+      constr > 0 ? `<span style="color:#5b8dee">건설중 ${constr}</span>` : '',
+    ].filter(Boolean).join('<span style="color:var(--muted); margin:0 4px;">·</span>');
+    return `
+      <div style="margin-bottom:12px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; font-size:12px; margin-bottom:5px;">
+          <span style="color:var(--text); font-weight:600;">${site.name}</span>
+          <span style="font-family:var(--font-mono); font-size:11px;">
+            <span style="color:var(--success)">운전 ${running}</span>
+            <span style="color:var(--muted); margin:0 4px;">·</span>
+            <span style="color:var(--warning)">정비 ${maint}</span>
+            ${extras ? '<span style="color:var(--muted); margin:0 4px;">·</span>' + extras : ''}
+            <span style="color:var(--muted); margin:0 4px;">·</span>
+            <span style="color:var(--muted)">전체 ${total}</span>
+          </span>
+        </div>
+        <div style="background:var(--border); border-radius:4px; height:7px; overflow:hidden;">
+          <div style="width:${pct}%; height:100%; background:${color}; border-radius:4px; transition:width 0.8s ease;"></div>
+        </div>
+      </div>`;
+  }).join('');
+
+  document.getElementById('nuclear-group-bars').innerHTML = `
+    <div style="background:var(--bg); border:1px solid var(--border); border-radius:10px; padding:14px;">
+      <div style="font-size:11px; color:var(--muted); margin-bottom:12px; letter-spacing:0.1em; text-transform:uppercase;">발전소별 운전 현황</div>
+      ${barsHtml}
+    </div>`;
+
+  // 발전소별 + 호기별 카드
+  const unitsHtml = sites.map(site => {
+    const color = GROUP_COLORS[site.name] || '#a78bfa';
+    const unitCards = site.units.map(u => {
+      const sc = STATUS_COLOR[u.st] || 'var(--muted)';
+      const si = STATUS_ICON[u.st] || '○';
+      // 신xx 호기는 이름 그대로, 일반 호기는 발전소명(원자력 제거) + 호기명
+      const siteShort = site.siteNm.replace(' 원자력', '');
+      const displayNm = u.nm.startsWith('신') ? u.nm : `${siteShort} ${u.nm}`;
+      return `
+        <div style="display:flex; align-items:center; justify-content:space-between;
+                    padding:9px 12px; background:var(--surface2); border-radius:8px; margin-bottom:6px;">
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span style="color:${sc}; font-size:10px;">${si}</span>
+            <span style="font-size:13px; font-weight:500; color:var(--text);">${displayNm}</span>
+          </div>
+          <span style="font-size:12px; font-weight:600; color:${sc}; font-family:var(--font-mono);">${u.st}</span>
+        </div>`;
+    }).join('');
+
+    // 정비/미운영 호기 목록으로 공지 직접 생성
+    const maintUnits  = site.units.filter(u => u.st === '정비').map(u => u.nm);
+    const runningList = site.units.filter(u => u.st === '운전').map(u => u.nm);
+    let noticeText = '';
+    if (maintUnits.length > 0)  noticeText += `정비 중: ${maintUnits.join(', ')}`;
+    if (noticeText) noticeText += ' / ';
+    if (runningList.length > 0) noticeText += `운전 중: ${runningList.join(', ')}`;
+
+    const notice = noticeText ? `
+      <div style="font-size:11px; color:var(--muted); line-height:1.6; padding:8px 10px;
+                  background:rgba(251,191,36,0.06); border-left:2px solid var(--warning);
+                  border-radius:0 6px 6px 0; margin-bottom:10px;">
+        ${noticeText}
+      </div>` : '';
+
+    return `
+      <div style="background:var(--bg); border:1px solid var(--border); border-radius:10px;
+                  padding:14px; margin-bottom:10px;">
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">
+          <div style="width:4px; height:18px; background:${color}; border-radius:2px;"></div>
+          <div style="font-size:14px; font-weight:700; color:var(--text);">${site.name} 원자력</div>
+        </div>
+        ${notice}
+        ${unitCards}
+      </div>`;
+  }).join('');
+
+  document.getElementById('nuclear-units').innerHTML = unitsHtml;
+}
+
+// ─────────────── CALCULATOR ───────────────
+let calcDisplay = '0';
+let calcExpr = '';
+let calcPrevResult = null;
+let calcWaitOp = false;
+let calcCurrentOp = null;
+let calcFirst = null;
+let calcJustEqual = false;
+
+function updateCalc() {
+  document.getElementById('calc-result').textContent = calcDisplay;
+  document.getElementById('calc-expr').textContent = calcExpr;
+}
+
+function calcNum(n) {
+  // 연산자 입력 후 또는 = 직후 숫자 입력 시 → 디스플레이 초기화
+  if (calcWaitOp || calcJustEqual) {
+    calcDisplay = '';
+    calcWaitOp = false;
+    calcJustEqual = false;
+  }
+  if (n === '.' && calcDisplay.includes('.')) return;
+  if (calcDisplay === '' || calcDisplay === '0') {
+    calcDisplay = n === '.' ? '0.' : n;
+  } else {
+    calcDisplay += n;
+  }
+  if (calcDisplay.replace('-','').replace('.','').length > 12) return;
+  updateCalc();
+}
+
+function calcOp(op) {
+  calcJustEqual = false;
+  const val = parseFloat(calcDisplay);
+  // 이미 숫자+연산자 대기 중인데 또 연산자 누른 경우 → 연산자만 교체
+  if (calcWaitOp) {
+    calcCurrentOp = op;
+    calcExpr = formatNum(calcFirst) + ' ' + op;
+    updateCalc();
+    return;
+  }
+  if (calcFirst !== null && calcCurrentOp) {
+    calcFirst = operate(calcFirst, val, calcCurrentOp);
+    calcDisplay = formatNum(calcFirst);
+  } else {
+    calcFirst = val;
+  }
+  calcCurrentOp = op;
+  calcExpr = formatNum(calcFirst) + ' ' + op;
+  calcWaitOp = true;
+  updateCalc();
+}
+
+function calcEqual() {
+  if (calcFirst === null || !calcCurrentOp) return;
+  const val = parseFloat(calcDisplay);
+  const result = operate(calcFirst, val, calcCurrentOp);
+  calcExpr = formatNum(calcFirst) + ' ' + calcCurrentOp + ' ' + formatNum(val) + ' =';
+  calcDisplay = formatNum(result);
+  calcFirst = null;
+  calcCurrentOp = null;
+  calcWaitOp = false;
+  calcJustEqual = true;
+  updateCalc();
+}
+
+function operate(a, b, op) {
+  if (op === '+') return a + b;
+  if (op === '−') return a - b;
+  if (op === '×') return a * b;
+  if (op === '÷') return b === 0 ? NaN : a / b;
+  return b;
+}
+
+function formatNum(n) {
+  if (isNaN(n)) return 'Error';
+  if (!isFinite(n)) return '∞';
+  const s = parseFloat(n.toFixed(8));
+  return s.toLocaleString('ko-KR', { maximumFractionDigits: 8 });
+}
+
+function calcFn(fn) {
+  if (fn === 'AC') {
+    calcDisplay = '0'; calcExpr = '';
+    calcFirst = null; calcCurrentOp = null;
+    calcWaitOp = false; calcJustEqual = false;
+  } else if (fn === '±') {
+    calcDisplay = formatNum(-parseFloat(calcDisplay));
+  } else if (fn === '%') {
+    calcDisplay = formatNum(parseFloat(calcDisplay) / 100);
+  }
+  updateCalc();
+}
+
+// Key input for calculator
+window.addEventListener('keydown', e => {
+  const active = document.querySelector('.panel.active');
+  if (!active || active.id !== 'panel-calc') return;
+  if (e.key >= '0' && e.key <= '9') calcNum(e.key);
+  else if (e.key === '.') calcNum('.');
+  else if (e.key === '+') calcOp('+');
+  else if (e.key === '-') calcOp('−');
+  else if (e.key === '*') calcOp('×');
+  else if (e.key === '/') { e.preventDefault(); calcOp('÷'); }
+  else if (e.key === 'Enter' || e.key === '=') calcEqual();
+  else if (e.key === 'Escape') calcFn('AC');
+  else if (e.key === 'Backspace') {
+    calcDisplay = calcDisplay.length > 1 ? calcDisplay.slice(0, -1) : '0';
+    updateCalc();
+  }
+});
+
+// ─────────────── POSTAL CODE ───────────────
+let postcodeInited = false;
+function initDaumPostcode() {
+  if (postcodeInited) return;
+  postcodeInited = true;
+  new daum.Postcode({
+    oncomplete: function(data) {
+      const resultEl = document.getElementById('postal-result');
+      resultEl.style.display = 'block';
+      resultEl.innerHTML = `
+        <div class="result-item">
+          <span class="result-zip">[${data.zonecode}]</span>
+          <div class="result-addr">${data.roadAddress}</div>
+          <div class="result-jibun">지번: ${data.jibunAddress}</div>
+        </div>`;
+    },
+    width: '100%',
+    height: 450,
+    animation: false,
+  }).embed(document.getElementById('postcode-embed'));
+}
+
+// ─────────────── ROUTE ───────────────
+function searchRoute() {
+  const start = document.getElementById('route-start').value.trim();
+  const end   = document.getElementById('route-end').value.trim();
+  if (!start || !end) {
+    document.getElementById('route-result').innerHTML =
+      '<div class="error-txt" style="margin-top:12px">출발지와 도착지를 모두 입력해 주세요.</div>';
+    return;
+  }
+
+  const s = encodeURIComponent(start);
+  const e = encodeURIComponent(end);
+
+  // 구글 지도: 텍스트 장소명만으로 출발지·도착지 자동입력 + 자동차 경로조회 작동
+  const googleUrl =
+    `https://www.google.com/maps/dir/?api=1&origin=${s}&destination=${e}&travelmode=driving`;
+
+  document.getElementById('route-result').innerHTML = `
+    <div class="distance-result">
+      <div class="dist-label">경로 안내</div>
+      <div style="font-size:13px; color:var(--muted); margin-bottom:14px; line-height:1.7;">
+        <span style="color:var(--success)">●</span> <strong style="color:var(--text)">${start}</strong><br>
+        <span style="padding-left:3px; color:var(--border); font-size:18px; line-height:0.5; display:inline-block">┊</span><br>
+        <span style="color:#f87171">●</span> <strong style="color:var(--text)">${end}</strong>
+      </div>
+      <a href="${googleUrl}" target="_blank"
+        style="display:flex;align-items:center;justify-content:center;gap:8px;padding:12px 18px;
+               background:#4285F4;color:#fff;border-radius:8px;text-decoration:none;
+               font-size:14px;font-weight:700;width:100%;">
+        🗺️ Google 지도 경로 바로가기
+      </a>
+      <div style="font-size:11px; color:var(--muted); margin-top:10px; line-height:1.7;">
+        출발지·도착지가 자동입력된 상태로 경로조회까지 바로 실행됩니다.
+      </div>
+    </div>
+  `;
+}
+
+// ─────────────── EXCHANGE RATE ───────────────
+let fxLoaded = false;
+let usdRate = null;
+let jpyRate = null;
+
+async function fetchRates() {
+  fxLoaded = true;
+  const ico = document.getElementById('refresh-ico');
+  ico.classList.add('spin');
+  document.getElementById('usd-rate').textContent = '—';
+  document.getElementById('jpy-rate').textContent = '—';
+  document.getElementById('fx-update-time').textContent = '불러오는 중...';
+
+  try {
+    const r = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
+    const data = await r.json();
+    usdRate = data.rates.KRW;
+    jpyRate = data.rates.KRW / data.rates.JPY * 100; // 100엔당 원화
+
+    document.getElementById('usd-rate').textContent =
+      usdRate.toLocaleString('ko-KR', {minimumFractionDigits: 1, maximumFractionDigits: 1});
+    document.getElementById('jpy-rate').textContent =
+      jpyRate.toLocaleString('ko-KR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+
+    document.getElementById('usd-change').textContent = '실시간';
+    document.getElementById('usd-change').className = 'rate-change up';
+    document.getElementById('jpy-change').textContent = '실시간';
+    document.getElementById('jpy-change').className = 'rate-change up';
+
+    // 데이터 기준 시간 표시 (API 제공 기준일 기반, 하루 1회 갱신)
+    const dateStr = data.date; // "YYYY-MM-DD"
+    const [y, m, d] = dateStr.split('-');
+    document.getElementById('fx-update-time').textContent =
+      `${parseInt(m)}월 ${parseInt(d)}일 09시 기준`;
+
+  } catch (e) {
+    document.getElementById('fx-update-time').textContent = '환율 로드 실패 — 새로고침 해주세요';
+    document.getElementById('usd-rate').textContent = 'Error';
+    document.getElementById('jpy-rate').textContent = 'Error';
+  }
+  ico.classList.remove('spin');
+}
+
+function convertUSD(val, dir) {
+  if (!usdRate) return;
+  const v = parseFloat(val);
+  if (isNaN(v)) return;
+  if (dir === 'usd') {
+    document.getElementById('krw-usd-inp').value = Math.round(v * usdRate).toLocaleString('ko-KR');
+  } else {
+    document.getElementById('usd-inp').value = (v / usdRate).toFixed(4);
+  }
+}
+
+function convertJPY(val, dir) {
+  if (!jpyRate) return;
+  const v = parseFloat(val);
+  if (isNaN(v)) return;
+  const rate = jpyRate / 100; // 1엔당
+  if (dir === 'jpy') {
+    document.getElementById('krw-jpy-inp').value = Math.round(v * rate).toLocaleString('ko-KR');
+  } else {
+    document.getElementById('jpy-inp').value = (v / rate).toFixed(0);
+  }
+}
+</script>
+</body>
+</html>
