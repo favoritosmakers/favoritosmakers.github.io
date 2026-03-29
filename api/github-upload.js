@@ -24,8 +24,22 @@ function pathFromFileUrl(fileUrl) {
   if (!fileUrl || typeof fileUrl !== "string") return null;
   const c = getConfig();
   if (!c) return null;
+  const noQuery = fileUrl.split("?")[0].split("#")[0];
   const prefix = `https://raw.githubusercontent.com/${c.owner}/${c.repo}/${branch}/`;
-  return fileUrl.startsWith(prefix) ? fileUrl.slice(prefix.length) : null;
+  return noQuery.startsWith(prefix) ? noQuery.slice(prefix.length) : null;
+}
+
+/** API가 주는 download_url은 비공개 시 ?token= 이 붙어 만료 후 404가 나므로, 토큰 없는 고정 raw URL만 저장한다. */
+function stableRawUrl(repoPath) {
+  const c = getConfig();
+  if (!c || !repoPath) return null;
+  const clean = String(repoPath).split("?")[0].split("#")[0];
+  const encoded = clean
+    .split("/")
+    .filter(Boolean)
+    .map((seg) => encodeURIComponent(seg))
+    .join("/");
+  return `https://raw.githubusercontent.com/${c.owner}/${c.repo}/${branch}/${encoded}`;
 }
 
 /** 기존 파일 정보 조회 (수정 시 sha 필요) */
@@ -214,8 +228,14 @@ export async function POST(request) {
       const project = projects.find((p) => p.id == projectId);
       if (project) {
         if (bodyFileUrl && !fileBase64) {
-          project.fileUrl = bodyFileUrl;
-          project.filePath = bodyFilePath || pathFromFileUrl(bodyFileUrl) || null;
+          const parsedPath = bodyFilePath || pathFromFileUrl(bodyFileUrl);
+          if (parsedPath) {
+            project.filePath = parsedPath;
+            project.fileUrl = stableRawUrl(parsedPath);
+          } else {
+            project.fileUrl = bodyFileUrl.split("?")[0].split("#")[0];
+            project.filePath = bodyFilePath || null;
+          }
           if (fileName) project.fileName = fileName;
         } else if (fileBase64 && fileName) {
           const oldPath = project.filePath || pathFromFileUrl(project.fileUrl) || null;
@@ -249,9 +269,7 @@ export async function POST(request) {
             result = await githubPut(path, fileBase64, true);
             project.filePath = path;
           }
-          if (result && result.content && result.content.download_url) {
-            project.fileUrl = result.content.download_url;
-          }
+          if (path) project.fileUrl = stableRawUrl(path);
           project.fileName = fileName;
         }
         if (imageBase64 && imageFileName) {
@@ -268,9 +286,7 @@ export async function POST(request) {
           const path = imagesPath + "/" + iname;
           const result = await githubPut(path, imageBase64, true);
           project.imagePath = path;
-          if (result && result.content && result.content.download_url) {
-            project.imageUrl = result.content.download_url;
-          }
+          if (path) project.imageUrl = stableRawUrl(path);
         }
       }
     }

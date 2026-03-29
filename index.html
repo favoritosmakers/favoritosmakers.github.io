@@ -1148,7 +1148,7 @@
             fetch(url)
               .then(function (r) { return r.ok ? r.json() : Promise.reject(); })
               .then(function (decoded) {
-                if (Array.isArray(decoded)) projects = normalizeProjectIds(decoded);
+                if (Array.isArray(decoded)) projects = normalizeProjectUrls(normalizeProjectIds(decoded));
                 else projects = defaultProjects.slice();
                 saveProjectsToStorage();
                 if (cb) cb();
@@ -1172,12 +1172,39 @@
           });
         }
 
+        /** 비공개 시 저장된 raw URL의 ?token= 은 만료되어 404 — 이 저장소·브랜치면 쿼리 제거 */
+        function stripOurRawUrlQuery(url) {
+          if (!url || typeof url !== "string" || !GITHUB_CONFIG.owner || !GITHUB_CONFIG.repo) return url;
+          var branch = GITHUB_CONFIG.branch || "main";
+          var prefix =
+            "https://raw.githubusercontent.com/" +
+            GITHUB_CONFIG.owner +
+            "/" +
+            GITHUB_CONFIG.repo +
+            "/" +
+            branch +
+            "/";
+          var base = url.split("?")[0].split("#")[0];
+          if (base.startsWith(prefix)) return base;
+          return url;
+        }
+
+        function normalizeProjectUrls(list) {
+          if (!Array.isArray(list)) return list;
+          return list.map(function (p) {
+            var o = Object.assign({}, p);
+            if (o.fileUrl) o.fileUrl = stripOurRawUrlQuery(o.fileUrl);
+            if (o.imageUrl) o.imageUrl = stripOurRawUrlQuery(o.imageUrl);
+            return o;
+          });
+        }
+
         function loadProjectsFromStorage() {
           try {
             var raw = localStorage.getItem(PROJECTS_STORAGE_KEY);
             if (raw) {
               var parsed = JSON.parse(raw);
-              if (Array.isArray(parsed) && parsed.length) return normalizeProjectIds(parsed);
+              if (Array.isArray(parsed) && parsed.length) return normalizeProjectUrls(normalizeProjectIds(parsed));
             }
           } catch (e) {}
           return defaultProjects.slice();
@@ -1232,7 +1259,7 @@
             })
             .then(function (data) {
               if (data.ok && Array.isArray(data.projects)) {
-                projects = normalizeProjectIds(data.projects);
+                projects = normalizeProjectUrls(normalizeProjectIds(data.projects));
                 saveProjectsToStorage();
               }
               if (cb) cb(data.ok ? null : (data.error || "오류"));
@@ -1403,7 +1430,12 @@
           if (!url || typeof url !== "string") return null;
           var parts = url.split("/");
           if (parts[2] !== "raw.githubusercontent.com" || parts.length < 7) return null;
-          return parts.slice(6).join("/");
+          var tail = parts.slice(6).join("/");
+          var q = tail.indexOf("?");
+          if (q !== -1) tail = tail.slice(0, q);
+          var h = tail.indexOf("#");
+          if (h !== -1) tail = tail.slice(0, h);
+          return tail;
         }
 
         function escapeHtml(s) {
